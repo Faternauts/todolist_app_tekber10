@@ -70,6 +70,12 @@ flutter:
     - images/icons/notif.svg
     - images/icons/filter.svg
     - images/icons/lens.svg
+    - images/icons/home.svg
+    - images/icons/home-active.svg
+    - images/icons/calendar.svg
+    - images/icons/inbox.svg
+    - images/icons/settings.svg
+    - images/icons/setting-activate.svg
 
   # Custom fonts
   fonts:
