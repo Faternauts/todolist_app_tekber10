@@ -128,18 +128,10 @@ class TaskCard extends StatelessWidget {
                 children: [
                   Chip(
                     label: Text(
-                      task.category,
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    padding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  Chip(
-                    label: Text(
                       task.priority.name.toUpperCase(),
                       style: const TextStyle(fontSize: 12),
                     ),
-                    backgroundColor: _getPriorityColor().withOpacity(0.2),
+                    backgroundColor: _getPriorityColor().withAlpha(51),
                     padding: EdgeInsets.zero,
                     visualDensity: VisualDensity.compact,
                   ),

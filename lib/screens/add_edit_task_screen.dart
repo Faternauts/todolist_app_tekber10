@@ -17,8 +17,8 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
-  late TextEditingController _categoryController;
   late DateTime _selectedDeadline;
+  DateTime? _selectedStartDate;
   late TaskPriority _selectedPriority;
   late TaskStatus _selectedStatus;
 
@@ -29,11 +29,9 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
     _descriptionController = TextEditingController(
       text: widget.task?.description ?? '',
     );
-    _categoryController = TextEditingController(
-      text: widget.task?.category ?? '',
-    );
     _selectedDeadline =
         widget.task?.deadline ?? DateTime.now().add(const Duration(days: 1));
+    _selectedStartDate = widget.task?.startDate;
     _selectedPriority = widget.task?.priority ?? TaskPriority.medium;
     _selectedStatus = widget.task?.status ?? TaskStatus.ongoing;
   }
@@ -42,7 +40,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    _categoryController.dispose();
     super.dispose();
   }
 
@@ -84,7 +81,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           title: _titleController.text,
           description: _descriptionController.text,
-          category: _categoryController.text,
+          startDate: _selectedStartDate,
           deadline: _selectedDeadline,
           status: _selectedStatus,
           priority: _selectedPriority,
@@ -96,7 +93,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
         final updatedTask = widget.task!.copyWith(
           title: _titleController.text,
           description: _descriptionController.text,
-          category: _categoryController.text,
+          startDate: _selectedStartDate,
           deadline: _selectedDeadline,
           status: _selectedStatus,
           priority: _selectedPriority,
@@ -155,21 +152,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
               },
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _categoryController,
-              decoration: const InputDecoration(
-                labelText: 'Category',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.category),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a category';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
             ListTile(
               title: const Text('Deadline'),
               subtitle: Text(
@@ -185,7 +167,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<TaskPriority>(
-              value: _selectedPriority,
+              initialValue: _selectedPriority,
               decoration: const InputDecoration(
                 labelText: 'Priority',
                 border: OutlineInputBorder(),
@@ -208,7 +190,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
             if (isEdit) ...[
               const SizedBox(height: 16),
               DropdownButtonFormField<TaskStatus>(
-                value: _selectedStatus,
+                initialValue: _selectedStatus,
                 decoration: const InputDecoration(
                   labelText: 'Status',
                   border: OutlineInputBorder(),

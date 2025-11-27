@@ -38,6 +38,8 @@ dependencies:
   intl: ^0.19.0
   shared_preferences: ^2.2.2
   image_picker: ^1.0.7
+  http: ^1.1.0
+  flutter_svg: ^2.0.9
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +61,23 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Assets
+  assets:
+    - images/top-bg.svg
+    - images/left-bg.svg
+    - images/icons/notif.svg
+    - images/icons/filter.svg
+    - images/icons/lens.svg
+
+  # Custom fonts
+  fonts:
+    - family: SFProDisplay
+      fonts:
+        - asset: fonts/SF-Pro-Display-Regular.otf
+          weight: 400
+        - asset: fonts/SF-Pro-Display-Bold.otf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:

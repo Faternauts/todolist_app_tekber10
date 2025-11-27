@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../providers/profile_provider.dart';
+import '../constants/app_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -56,7 +57,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       profileProvider.updateProfile(_nameController.text, _newPhotoPath);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
+        SnackBar(
+          content: const Text('Profile updated successfully'),
+          backgroundColor: AppColors.statusCompleted,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+        ),
       );
       Navigator.pop(context);
     }
@@ -65,17 +73,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        backgroundColor: AppColors.primaryDark,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          'Edit Profile',
+          style: AppTextStyles.h4.copyWith(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
-          IconButton(icon: const Icon(Icons.check), onPressed: _saveProfile),
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: _saveProfile,
+          ),
         ],
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
+            const SizedBox(height: AppSpacing.lg),
+            
+            // Profile picture
             Center(
               child: Stack(
                 children: [
@@ -84,24 +109,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       final photoPath =
                           _newPhotoPath ?? profileProvider.profile.photoPath;
 
-                      return CircleAvatar(
-                        radius: 60,
-                        backgroundImage: photoPath != null
-                            ? FileImage(File(photoPath))
-                            : null,
-                        child: photoPath == null
-                            ? const Icon(Icons.person, size: 60)
-                            : null,
+                      return Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.primaryPurple,
+                            width: 3,
+                          ),
+                          boxShadow: const [AppShadows.medium],
+                        ),
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: AppColors.primaryLight,
+                          backgroundImage: photoPath != null
+                              ? FileImage(File(photoPath))
+                              : null,
+                          child: photoPath == null
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: AppColors.primaryDark,
+                                )
+                              : null,
+                        ),
                       );
                     },
                   ),
                   Positioned(
                     bottom: 0,
                     right: 0,
-                    child: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.purpleGradient,
+                        shape: BoxShape.circle,
+                        boxShadow: const [AppShadows.small],
+                      ),
                       child: IconButton(
-                        icon: const Icon(Icons.camera_alt, color: Colors.white),
+                        icon: const Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                         onPressed: _pickImage,
                       ),
                     ),
@@ -109,13 +159,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 32),
+            
+            const SizedBox(height: AppSpacing.xl),
+            
+            // Name field
+            Text(
+              'Name',
+              style: AppTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
+              style: AppTextStyles.bodyMedium,
+              decoration: InputDecoration(
+                hintText: 'Enter your name',
+                hintStyle: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textHint,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                prefixIcon: const Icon(
+                  Icons.person_outline,
+                  color: AppColors.primaryPurple,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  borderSide: const BorderSide(
+                    color: AppColors.borderLight,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  borderSide: const BorderSide(
+                    color: AppColors.borderLight,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  borderSide: const BorderSide(
+                    color: AppColors.primaryPurple,
+                    width: 2,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  borderSide: const BorderSide(
+                    color: AppColors.priorityHigh,
+                  ),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  borderSide: const BorderSide(
+                    color: AppColors.priorityHigh,
+                    width: 2,
+                  ),
+                ),
+                contentPadding: const EdgeInsets.all(AppSpacing.md),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -124,13 +226,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _saveProfile,
-              icon: const Icon(Icons.save),
-              label: const Text('Save Profile'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+            
+            const SizedBox(height: AppSpacing.xl),
+            
+            // Save button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _saveProfile,
+                icon: const Icon(Icons.save),
+                label: const Text('Save Profile'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryPurple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppSpacing.md,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.full),
+                  ),
+                  elevation: 4,
+                  textStyle: AppTextStyles.button,
+                ),
               ),
             ),
           ],

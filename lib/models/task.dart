@@ -8,23 +8,25 @@ class Task {
   final String id;
   String title;
   String description;
-  String category;
+  DateTime? startDate;
   DateTime deadline;
   TaskStatus status;
   TaskPriority priority;
   DateTime createdAt;
   DateTime? completedAt;
+  List<String>? steps; // AI-generated task breakdown steps
 
   Task({
     required this.id,
     required this.title,
     required this.description,
-    required this.category,
+    this.startDate,
     required this.deadline,
     this.status = TaskStatus.ongoing,
     this.priority = TaskPriority.medium,
     required this.createdAt,
     this.completedAt,
+    this.steps,
   });
 
   // Check if task is missed
@@ -54,12 +56,13 @@ class Task {
       'id': id,
       'title': title,
       'description': description,
-      'category': category,
+      'startDate': startDate?.toIso8601String(),
       'deadline': deadline.toIso8601String(),
       'status': status.index,
       'priority': priority.index,
       'createdAt': createdAt.toIso8601String(),
       'completedAt': completedAt?.toIso8601String(),
+      'steps': steps,
     };
   }
 
@@ -69,7 +72,9 @@ class Task {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      category: json['category'],
+      startDate: json['startDate'] != null
+          ? DateTime.parse(json['startDate'])
+          : null,
       deadline: DateTime.parse(json['deadline']),
       status: TaskStatus.values[json['status']],
       priority: TaskPriority.values[json['priority']],
@@ -77,28 +82,33 @@ class Task {
       completedAt: json['completedAt'] != null
           ? DateTime.parse(json['completedAt'])
           : null,
+      steps: json['steps'] != null
+          ? List<String>.from(json['steps'])
+          : null,
     );
   }
 
   Task copyWith({
     String? title,
     String? description,
-    String? category,
+    DateTime? startDate,
     DateTime? deadline,
     TaskStatus? status,
     TaskPriority? priority,
     DateTime? completedAt,
+    List<String>? steps,
   }) {
     return Task(
       id: id,
       title: title ?? this.title,
       description: description ?? this.description,
-      category: category ?? this.category,
+      startDate: startDate ?? this.startDate,
       deadline: deadline ?? this.deadline,
       status: status ?? this.status,
       priority: priority ?? this.priority,
       createdAt: createdAt,
       completedAt: completedAt ?? this.completedAt,
+      steps: steps ?? this.steps,
     );
   }
 }

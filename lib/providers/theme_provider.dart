@@ -13,14 +13,33 @@ class ThemeProvider with ChangeNotifier {
     // Default Light Theme
     ThemeData(
       useMaterial3: true,
+      fontFamily: 'SFProDisplay',
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.blue,
         brightness: Brightness.light,
+      ),
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(fontFamily: 'SFProDisplay'),
+        displayMedium: TextStyle(fontFamily: 'SFProDisplay'),
+        displaySmall: TextStyle(fontFamily: 'SFProDisplay'),
+        headlineLarge: TextStyle(fontFamily: 'SFProDisplay'),
+        headlineMedium: TextStyle(fontFamily: 'SFProDisplay'),
+        headlineSmall: TextStyle(fontFamily: 'SFProDisplay'),
+        titleLarge: TextStyle(fontFamily: 'SFProDisplay'),
+        titleMedium: TextStyle(fontFamily: 'SFProDisplay'),
+        titleSmall: TextStyle(fontFamily: 'SFProDisplay'),
+        bodyLarge: TextStyle(fontFamily: 'SFProDisplay'),
+        bodyMedium: TextStyle(fontFamily: 'SFProDisplay'),
+        bodySmall: TextStyle(fontFamily: 'SFProDisplay'),
+        labelLarge: TextStyle(fontFamily: 'SFProDisplay'),
+        labelMedium: TextStyle(fontFamily: 'SFProDisplay'),
+        labelSmall: TextStyle(fontFamily: 'SFProDisplay'),
       ),
     ),
     // Purple Theme
     ThemeData(
       useMaterial3: true,
+      fontFamily: 'SFProDisplay',
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.purple,
         brightness: Brightness.light,
@@ -29,6 +48,7 @@ class ThemeProvider with ChangeNotifier {
     // Green Theme
     ThemeData(
       useMaterial3: true,
+      fontFamily: 'SFProDisplay',
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.green,
         brightness: Brightness.light,
@@ -37,6 +57,7 @@ class ThemeProvider with ChangeNotifier {
     // Orange Theme
     ThemeData(
       useMaterial3: true,
+      fontFamily: 'SFProDisplay',
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.orange,
         brightness: Brightness.light,
@@ -48,6 +69,7 @@ class ThemeProvider with ChangeNotifier {
     // Default Dark Theme
     ThemeData(
       useMaterial3: true,
+      fontFamily: 'SFProDisplay',
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.blue,
         brightness: Brightness.dark,
@@ -56,6 +78,7 @@ class ThemeProvider with ChangeNotifier {
     // Purple Dark Theme
     ThemeData(
       useMaterial3: true,
+      fontFamily: 'SFProDisplay',
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.purple,
         brightness: Brightness.dark,
@@ -64,6 +87,7 @@ class ThemeProvider with ChangeNotifier {
     // Green Dark Theme
     ThemeData(
       useMaterial3: true,
+      fontFamily: 'SFProDisplay',
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.green,
         brightness: Brightness.dark,
@@ -72,6 +96,7 @@ class ThemeProvider with ChangeNotifier {
     // Orange Dark Theme
     ThemeData(
       useMaterial3: true,
+      fontFamily: 'SFProDisplay',
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.orange,
         brightness: Brightness.dark,

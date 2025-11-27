@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../constants/app_theme.dart';
 import '../providers/task_provider.dart';
-import '../providers/profile_provider.dart';
 import '../models/task.dart';
-import 'add_edit_task_screen.dart';
-import 'profile_screen.dart';
+import '../widgets/add_task_bottom_sheet.dart';
+import '../widgets/success_modal.dart';
+import 'focus_mode_screen.dart';
 import 'theme_settings_screen.dart';
-import 'dart:io';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedFilter = 0; // 0: All, 1: Ongoing, 2: Missed, 3: Completed
+  String _selectedFilter = 'All'; // 'All', 'Ongoing', 'Missed', 'Completed'
   int _selectedBottomNav = 0;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
@@ -28,447 +29,406 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  List<Task> _getFilteredTasks(TaskProvider taskProvider) {
+    List<Task> tasks;
+
+    switch (_selectedFilter) {
+      case 'All':
+        tasks = taskProvider.allTasks;
+        break;
+      case 'Ongoing':
+        tasks = taskProvider.ongoingTasks;
+        break;
+      case 'Completed':
+        tasks = taskProvider.completedTasks;
+        break;
+      case 'Missed':
+        tasks = taskProvider.missedTasks;
+        break;
+      default:
+        tasks = taskProvider.allTasks;
+    }
+
+    if (_searchQuery.isNotEmpty) {
+      tasks = tasks.where((task) => task.title.toLowerCase().contains(_searchQuery.toLowerCase()) || task.description.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+    }
+
+    return tasks;
+  }
+
+  Color _getPriorityColor(TaskPriority priority) {
+    switch (priority) {
+      case TaskPriority.high:
+        return AppColors.priorityHigh;
+      case TaskPriority.medium:
+        return AppColors.priorityMedium;
+      case TaskPriority.low:
+        return AppColors.priorityLow;
+    }
+  }
+
+  Color _getPriorityBgColor(TaskPriority priority) {
+    switch (priority) {
+      case TaskPriority.high:
+        return AppColors.priorityHighBg;
+      case TaskPriority.medium:
+        return AppColors.priorityMediumBg;
+      case TaskPriority.low:
+        return AppColors.priorityLowBg;
+    }
+  }
+
+  Future<void> _addNewTask() async {
+    final task = await AddTaskBottomSheet.show(context);
+
+    if (task != null && mounted) {
+      final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+      await taskProvider.addTask(task);
+
+      // Show success modal
+      final shouldCheckTask = await SuccessModal.show(context);
+
+      if (shouldCheckTask == true && mounted) {
+        // Navigate to focus mode
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => FocusModeScreen(task: task)));
+      }
+    }
+  }
+
+  void _openTaskDetail(Task task) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => FocusModeScreen(task: task)));
+  }
+
   @override
   Widget build(BuildContext context) {
-    final profile = Provider.of<ProfileProvider>(context).profile;
-    final taskProvider = Provider.of<TaskProvider>(context);
-
-    // Get filtered tasks
-    List<Task> filteredTasks = [];
-    switch (_selectedFilter) {
-      case 0: // All
-        filteredTasks = taskProvider.allTasks;
-        break;
-      case 1: // Ongoing
-        filteredTasks = taskProvider.ongoingTasks;
-        break;
-      case 2: // Missed
-        filteredTasks = taskProvider.missedTasks;
-        break;
-      case 3: // Completed
-        filteredTasks = taskProvider.completedTasks;
-        break;
-    }
-
-    // Apply search filter
-    if (_searchQuery.isNotEmpty) {
-      filteredTasks = filteredTasks
-          .where(
-            (task) =>
-                task.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                task.description.toLowerCase().contains(
-                  _searchQuery.toLowerCase(),
-                ),
-          )
-          .toList();
-    }
+    final String today = DateFormat('EEEE, d MMMM yyyy').format(DateTime.now());
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Column(
           children: [
-            // Header with profile and greeting
-            _buildHeader(profile),
-
-            // Search bar
-            _buildSearchBar(),
-
-            // Filter tabs
-            _buildFilterTabs(),
-
-            // Task list
-            Expanded(child: _buildTaskList(filteredTasks, taskProvider)),
-          ],
-        ),
-      ),
-      bottomNavigationBar: _buildBottomNavBar(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddEditTaskScreen()),
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
-  }
-
-  Widget _buildHeader(profile) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).colorScheme.primary.withOpacity(0.1),
-            Theme.of(context).colorScheme.surface,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfileScreen()),
-              );
-            },
-            child: CircleAvatar(
-              radius: 28,
-              backgroundImage: profile.photoPath != null
-                  ? FileImage(File(profile.photoPath!))
-                  : null,
-              child: profile.photoPath == null
-                  ? const Icon(Icons.person, size: 28)
-                  : null,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Hello, ${profile.name}',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+            // Header with gradient background and SVG decorations
+            Container(
+              decoration: const BoxDecoration(
+                color: AppColors.primaryPurple, // Light purple from screenshot
+              ),
+              child: Stack(
+                clipBehavior: Clip.hardEdge,
+                children: [
+                  // Left bottom background SVG
+                  Positioned(
+                    left: -20,
+                    bottom: -20,
+                    child: Opacity(opacity: 0.8, child: SvgPicture.asset('images/left-bg.svg', width: 130, height: 130, fit: BoxFit.contain)),
                   ),
-                ),
-                Text(
-                  DateFormat('EEEE, dd MMMM yyyy').format(DateTime.now()),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.palette),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ThemeSettingsScreen(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) {
-          setState(() {
-            _searchQuery = value;
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'Search task',
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: _searchQuery.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    setState(() {
-                      _searchController.clear();
-                      _searchQuery = '';
-                    });
-                  },
-                )
-              : const Icon(Icons.tune),
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
-        ),
-      ),
-    );
-  }
+                  // Top right background SVG
+                  Positioned(
+                    right: -40,
+                    top: -40,
+                    child: Opacity(opacity: 0.8, child: SvgPicture.asset('images/top-bg.svg', width: 160, height: 160, fit: BoxFit.contain)),
+                  ),
 
-  Widget _buildFilterTabs() {
-    final filters = [
-      {'label': 'All', 'count': 0},
-      {'label': 'Ongoing', 'count': 1},
-      {'label': 'Missed', 'count': 2},
-      {'label': 'Completed', 'count': 3},
-    ];
+                  // Main content
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: Column(
+                      children: [
+                        // Top row with profile and notification
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.white,
+                              backgroundImage: const NetworkImage('https://i.pravatar.cc/150?img=1'),
+                              child: const Icon(Icons.person, color: AppColors.primaryDark, size: 20),
+                            ),
+                            Container(
+                              width: 48,
+                              height: 48,
+                              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                              child: IconButton(
+                                icon: SvgPicture.asset('images/icons/notif.svg', width: 20, height: 20, colorFilter: const ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn)),
+                                onPressed: () {},
+                              ),
+                            ),
+                          ],
+                        ),
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'All Activity',
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: filters.map((filter) {
-                final index = filter['count'] as int;
-                final isSelected = _selectedFilter == index;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: FilterChip(
-                    label: Text(filter['label'] as String),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      setState(() {
-                        _selectedFilter = index;
-                      });
-                    },
-                    backgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainerHighest,
-                    selectedColor: Theme.of(context).colorScheme.primary,
-                    labelStyle: TextStyle(
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.onSurface,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                        const SizedBox(height: AppSpacing.md),
+
+                        // Greeting text
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Hello, Kristin W',
+                              style: AppTextStyles.h2.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                            ),
+                            Text(today, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+
+                        const SizedBox(height: AppSpacing.lg),
+
+                        // Search bar
+                        Container(
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(AppRadius.full)),
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (value) {
+                              setState(() {
+                                _searchQuery = value;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search tasks',
+                              hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.all(14.0),
+                                child: SvgPicture.asset('images/icons/lens.svg', width: 20, height: 20, colorFilter: const ColorFilter.mode(AppColors.textHint, BlendMode.srcIn)),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: SvgPicture.asset('images/icons/filter.svg', width: 12, height: 12, colorFilter: const ColorFilter.mode(AppColors.primaryDark, BlendMode.srcIn)),
+                                onPressed: () {},
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              }).toList(),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildTaskList(List<Task> tasks, TaskProvider taskProvider) {
-    if (tasks.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.task_alt, size: 80, color: Colors.grey.shade300),
-            const SizedBox(height: 16),
-            Text(
-              'No tasks found',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey.shade400,
-                fontWeight: FontWeight.w500,
+            // Main content with rounded top
+            Expanded(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(colors: [AppColors.primaryPurple, Color(0xFFD4C4F0)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+                ),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xxl + 10)),
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Section header
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('All Activity', style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary)),
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                'See More',
+                                style: AppTextStyles.bodySmall.copyWith(color: AppColors.accentPurple, fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: AppSpacing.md),
+
+                      // Category tabs
+                      SizedBox(
+                        height: 40,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                          children: [
+                            _buildCategoryTab('All'),
+                            const SizedBox(width: AppSpacing.sm),
+                            _buildCategoryTab('Ongoing'),
+                            const SizedBox(width: AppSpacing.sm),
+                            _buildCategoryTab('Missed'),
+                            const SizedBox(width: AppSpacing.sm),
+                            _buildCategoryTab('Completed'),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: AppSpacing.md),
+
+                      // Task list
+                      Expanded(
+                        child: Consumer<TaskProvider>(
+                          builder: (context, taskProvider, child) {
+                            final tasks = _getFilteredTasks(taskProvider);
+
+                            if (tasks.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.inbox_outlined, size: 64, color: AppColors.textHint),
+                                    const SizedBox(height: AppSpacing.md),
+                                    Text('No tasks found', style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary)),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    Text('Tap the + button to add a new task', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textHint)),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            return ListView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+                              itemCount: tasks.length,
+                              itemBuilder: (context, index) {
+                                final task = tasks[index];
+                                return _buildTaskCard(task);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
         ),
-      );
-    }
+      ),
+      bottomNavigationBar: _buildBottomNav(),
+    );
+  }
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        final task = tasks[index];
-        return _buildSimpleTaskCard(task, taskProvider);
+  Widget _buildCategoryTab(String label) {
+    final isSelected = _selectedFilter == label;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedFilter = label;
+        });
       },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primaryDark : Colors.white,
+          borderRadius: BorderRadius.circular(AppRadius.full),
+          border: Border.all(color: isSelected ? AppColors.primaryDark : const Color(0xFFE5E7EB)),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 14, color: Colors.black87, fontWeight: FontWeight.w500, fontFamily: 'SFProDisplay').copyWith(color: isSelected ? Colors.white : AppColors.textSecondary),
+        ),
+      ),
     );
   }
 
-  Widget _buildSimpleTaskCard(Task task, TaskProvider taskProvider) {
-    Color priorityColor;
-    switch (task.priority) {
-      case TaskPriority.high:
-        priorityColor = Colors.red;
-        break;
-      case TaskPriority.medium:
-        priorityColor = Colors.orange;
-        break;
-      case TaskPriority.low:
-        priorityColor = Colors.blue;
-        break;
-    }
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant,
-          width: 1,
+  Widget _buildTaskCard(Task task) {
+    return GestureDetector(
+      onTap: () => _openTaskDetail(task),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppSpacing.md),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md + 2),
+        decoration: BoxDecoration(
+          color: AppColors.backgroundWhite,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          border: Border.all(color: AppColors.borderLight),
+          boxShadow: const [AppShadows.small],
         ),
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddEditTaskScreen(task: task),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                task.title,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.textPrimary, fontFamily: 'SFProDisplay'),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          );
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      task.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        decoration: task.status == TaskStatus.completed
-                            ? TextDecoration.lineThrough
-                            : null,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: priorityColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      task.priority.name.toUpperCase(),
-                      style: TextStyle(
-                        color: priorityColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+            const SizedBox(width: AppSpacing.md),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(color: _getPriorityBgColor(task.priority), borderRadius: BorderRadius.circular(20)),
+              child: Text(
+                task.priority.name[0].toUpperCase() + task.priority.name.substring(1),
+                style: TextStyle(fontSize: 12, color: _getPriorityColor(task.priority), fontWeight: FontWeight.w600, fontFamily: 'SFProDisplay'),
               ),
-              if (task.description.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Text(
-                  task.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
-                ),
-              ],
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(
-                    Icons.calendar_today,
-                    size: 14,
-                    color: task.isMissed ? Colors.red : Colors.grey,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Due ${DateFormat('dd MMM').format(task.deadline)}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: task.isMissed ? Colors.red : Colors.grey,
-                      fontWeight: task.isMissed
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: task.status == TaskStatus.completed
-                          ? Colors.green.withOpacity(0.2)
-                          : task.status == TaskStatus.missed
-                          ? Colors.red.withOpacity(0.2)
-                          : Colors.blue.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      task.status.name,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: task.status == TaskStatus.completed
-                            ? Colors.green
-                            : task.status == TaskStatus.missed
-                            ? Colors.red
-                            : Colors.blue,
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    task.category,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedBottomNav,
-      onTap: (index) {
+  Widget _buildBottomNav() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [BoxShadow(color: AppColors.shadowColor, blurRadius: 8, offset: Offset(0, -2))],
+      ),
+      child: SafeArea(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(Icons.home, 'Home', 0),
+            _buildNavItem(Icons.calendar_today, 'Upcoming', 1),
+            _buildCenterAddButton(),
+            _buildNavItem(Icons.inbox, 'Inbox', 3),
+            _buildNavItem(Icons.settings, 'Settings', 4),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    final isActive = _selectedBottomNav == index;
+
+    return GestureDetector(
+      onTap: () {
         setState(() {
           _selectedBottomNav = index;
         });
-        if (index == 1) {
-          // Upcoming - could navigate to calendar view
-        } else if (index == 3) {
-          // Inbox - could navigate to notifications
-        } else if (index == 4) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ThemeSettingsScreen(),
-            ),
-          );
+
+        // Handle navigation
+        if (index == 4) {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ThemeSettingsScreen()));
         }
       },
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: Theme.of(context).colorScheme.primary,
-      unselectedItemColor: Colors.grey,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today),
-          label: 'Upcoming',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: isActive ? AppColors.primaryDark : AppColors.textHint, size: 24),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: AppTextStyles.caption.copyWith(color: isActive ? AppColors.primaryDark : AppColors.textHint, fontWeight: isActive ? FontWeight.bold : FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCenterAddButton() {
+    return GestureDetector(
+      onTap: _addNewTask,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: const BoxDecoration(
+          color: AppColors.primaryDark, // Dark purple circle
+          shape: BoxShape.circle,
+          boxShadow: [AppShadows.medium],
         ),
-        BottomNavigationBarItem(icon: SizedBox.shrink(), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.inbox), label: 'Inbox'),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-      ],
+        child: const Icon(Icons.add, color: Colors.white, size: 32),
+      ),
     );
   }
 }
