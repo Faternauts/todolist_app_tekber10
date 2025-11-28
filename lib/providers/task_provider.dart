@@ -17,18 +17,9 @@ class TaskProvider with ChangeNotifier {
     return _tasks;
   }
 
-  List<Task> get ongoingTasks =>
-      allTasks.where((task) => task.status == TaskStatus.ongoing).toList()
-        ..sort((a, b) => a.deadline.compareTo(b.deadline));
-
-  List<Task> get completedTasks =>
-      allTasks.where((task) => task.status == TaskStatus.completed).toList()
-        ..sort((a, b) => b.completedAt!.compareTo(a.completedAt!));
-
-  List<Task> get missedTasks =>
-      allTasks.where((task) => task.status == TaskStatus.missed).toList()
-        ..sort((a, b) => a.deadline.compareTo(b.deadline));
-
+  List<Task> get ongoingTasks => allTasks.where((task) => task.status == TaskStatus.ongoing).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
+  List<Task> get completedTasks => allTasks.where((task) => task.status == TaskStatus.completed).toList()..sort((a, b) => b.completedAt!.compareTo(a.completedAt!));
+  List<Task> get missedTasks => allTasks.where((task) => task.status == TaskStatus.missed).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
   // Add task
   Future<void> addTask(Task task) async {
     try {
@@ -76,7 +67,7 @@ class TaskProvider with ChangeNotifier {
       };
 
       final response = await supabase.from('notes').insert(taskData).select().single();
-      
+
       // Update task id dengan uuid dari Supabase
       final newTask = Task(
         id: response['id'],
@@ -90,7 +81,7 @@ class TaskProvider with ChangeNotifier {
         completedAt: task.completedAt,
         steps: task.steps,
       );
-      
+
       _tasks.add(newTask);
       _isLoading = false;
       notifyListeners();
@@ -235,11 +226,7 @@ class TaskProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      final response = await supabase
-          .from('notes')
-          .select()
-          .eq('user_id', SupabaseConfig.adminUserId)
-          .order('created_at', ascending: false);
+      final response = await supabase.from('notes').select().eq('user_id', SupabaseConfig.adminUserId).order('created_at', ascending: false);
 
       _tasks = (response as List).map((json) {
         // Map string status dari Supabase ke enum
@@ -298,7 +285,7 @@ class TaskProvider with ChangeNotifier {
           createdAt: DateTime.parse(json['created_at']),
           completedAt: null, // notes table tidak punya completed_at
           steps: json['steps'] != null && json['steps'] is List
-              ? List<String>.from(json['steps'])
+              ? List<Map<String, dynamic>>.from((json['steps'] as List).map((x) => x is Map ? Map<String, dynamic>.from(x) : {'step': x.toString(), 'estimatedMinutes': 10}))
               : null,
         );
       }).toList();
