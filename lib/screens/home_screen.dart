@@ -275,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.inbox_outlined, size: 64, color: AppColors.textHint),
+                                    SvgPicture.asset('images/not-found.svg', width: 64, height: 64, colorFilter: const ColorFilter.mode(AppColors.textHint, BlendMode.srcIn)),
                                     const SizedBox(height: AppSpacing.md),
                                     Text('No tasks found', style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary)),
                                     const SizedBox(height: AppSpacing.sm),

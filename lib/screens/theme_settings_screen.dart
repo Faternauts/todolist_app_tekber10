@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../constants/app_theme.dart';
-import '../services/ai_service.dart';
 
 class ThemeSettingsScreen extends StatefulWidget {
   const ThemeSettingsScreen({super.key});
@@ -12,47 +11,6 @@ class ThemeSettingsScreen extends StatefulWidget {
 }
 
 class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
-  final _apiKeyController = TextEditingController();
-  bool _isLoadingApiKey = true;
-  bool _apiKeyObscured = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadApiKey();
-  }
-
-  @override
-  void dispose() {
-    _apiKeyController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadApiKey() async {
-    final apiKey = await AIService.getApiKey();
-    if (mounted) {
-      setState(() {
-        _apiKeyController.text = apiKey ?? '';
-        _isLoadingApiKey = false;
-      });
-    }
-  }
-
-  Future<void> _saveApiKey() async {
-    await AIService.saveApiKey(_apiKeyController.text);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('API key saved successfully'),
-          backgroundColor: AppColors.statusCompleted,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,139 +34,6 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
           return ListView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
-              // AI Settings Section
-              Text(
-                'AI Settings',
-                style: AppTextStyles.h4.copyWith(
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                  boxShadow: const [AppShadows.small],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(AppSpacing.sm),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLight,
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                          ),
-                          child: const Icon(
-                            Icons.psychology,
-                            color: AppColors.primaryPurple,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Gemini API Key',
-                                style: AppTextStyles.bodyLarge.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'Required for AI task breakdown',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    if (_isLoadingApiKey)
-                      const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    else
-                      TextField(
-                        controller: _apiKeyController,
-                        obscureText: _apiKeyObscured,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your Gemini API key',
-                          hintStyle: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textHint,
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xFFF9FAFB),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _apiKeyObscured
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: AppColors.textHint,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _apiKeyObscured = !_apiKeyObscured;
-                              });
-                            },
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                            borderSide: const BorderSide(
-                              color: AppColors.borderLight,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                            borderSide: const BorderSide(
-                              color: AppColors.borderLight,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                            borderSide: const BorderSide(
-                              color: AppColors.primaryPurple,
-                              width: 2,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.all(AppSpacing.md),
-                        ),
-                      ),
-                    const SizedBox(height: AppSpacing.md),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _saveApiKey,
-                        icon: const Icon(Icons.save, size: 18),
-                        label: const Text('Save API Key'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryPurple,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.sm,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                          ),
-                          textStyle: AppTextStyles.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: AppSpacing.xl),
-
               // Theme Mode Section
               Text(
                 'Theme Mode',
@@ -369,41 +194,41 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                   borderRadius: BorderRadius.circular(AppRadius.lg),
                   boxShadow: const [AppShadows.small],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     Text(
                       'Button Styles',
                       style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: AppSpacing.md),
                     Wrap(
                       spacing: AppSpacing.sm,
                       runSpacing: AppSpacing.sm,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {},
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryPurple,
                             foregroundColor: Colors.white,
                           ),
                           child: const Text('Elevated'),
-                        ),
-                        FilledButton(
-                          onPressed: () {},
-                          child: const Text('Filled'),
-                        ),
-                        OutlinedButton(
-                          onPressed: () {},
-                          child: const Text('Outlined'),
-                        ),
-                      ],
-                    ),
-                  ],
+                          ),
+                          FilledButton(
+                            onPressed: () {},
+                            child: const Text('Filled'),
+                          ),
+                          OutlinedButton(
+                            onPressed: () {},
+                            child: const Text('Outlined'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               
               const SizedBox(height: AppSpacing.xl),
             ],

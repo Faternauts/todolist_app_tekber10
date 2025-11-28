@@ -14,7 +14,8 @@ class Task {
   TaskPriority priority;
   DateTime createdAt;
   DateTime? completedAt;
-  List<String>? steps; // AI-generated task breakdown steps
+  List<Map<String, dynamic>>? steps; // AI-generated task breakdown steps with time estimates: [{step: string, estimatedMinutes: int}]
+  int? totalEstimatedMinutes; // Total estimated time for all steps
 
   Task({
     required this.id,
@@ -27,6 +28,7 @@ class Task {
     required this.createdAt,
     this.completedAt,
     this.steps,
+    this.totalEstimatedMinutes,
   });
 
   // Check if task is missed
@@ -63,6 +65,7 @@ class Task {
       'createdAt': createdAt.toIso8601String(),
       'completedAt': completedAt?.toIso8601String(),
       'steps': steps,
+      'totalEstimatedMinutes': totalEstimatedMinutes,
     };
   }
 
@@ -72,19 +75,14 @@ class Task {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      startDate: json['startDate'] != null
-          ? DateTime.parse(json['startDate'])
-          : null,
+      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
       deadline: DateTime.parse(json['deadline']),
       status: TaskStatus.values[json['status']],
       priority: TaskPriority.values[json['priority']],
       createdAt: DateTime.parse(json['createdAt']),
-      completedAt: json['completedAt'] != null
-          ? DateTime.parse(json['completedAt'])
-          : null,
-      steps: json['steps'] != null
-          ? List<String>.from(json['steps'])
-          : null,
+      completedAt: json['completedAt'] != null ? DateTime.parse(json['completedAt']) : null,
+      steps: json['steps'] != null ? List<Map<String, dynamic>>.from(json['steps'].map((x) => Map<String, dynamic>.from(x))) : null,
+      totalEstimatedMinutes: json['totalEstimatedMinutes'],
     );
   }
 
@@ -96,7 +94,8 @@ class Task {
     TaskStatus? status,
     TaskPriority? priority,
     DateTime? completedAt,
-    List<String>? steps,
+    List<Map<String, dynamic>>? steps,
+    int? totalEstimatedMinutes,
   }) {
     return Task(
       id: id,
@@ -109,6 +108,7 @@ class Task {
       createdAt: createdAt,
       completedAt: completedAt ?? this.completedAt,
       steps: steps ?? this.steps,
+      totalEstimatedMinutes: totalEstimatedMinutes ?? this.totalEstimatedMinutes,
     );
   }
 }

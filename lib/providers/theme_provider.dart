@@ -14,10 +14,7 @@ class ThemeProvider with ChangeNotifier {
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.blue,
-        brightness: Brightness.light,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.light),
       textTheme: const TextTheme(
         displayLarge: TextStyle(fontFamily: 'SFProDisplay'),
         displayMedium: TextStyle(fontFamily: 'SFProDisplay'),
@@ -40,28 +37,19 @@ class ThemeProvider with ChangeNotifier {
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.purple,
-        brightness: Brightness.light,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple, brightness: Brightness.light),
     ),
     // Green Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.green,
-        brightness: Brightness.light,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, brightness: Brightness.light),
     ),
     // Orange Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.orange,
-        brightness: Brightness.light,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange, brightness: Brightness.light),
     ),
   ];
 
@@ -70,37 +58,25 @@ class ThemeProvider with ChangeNotifier {
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.blue,
-        brightness: Brightness.dark,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark),
     ),
     // Purple Dark Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.purple,
-        brightness: Brightness.dark,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple, brightness: Brightness.dark),
     ),
     // Green Dark Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.green,
-        brightness: Brightness.dark,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, brightness: Brightness.dark),
     ),
     // Orange Dark Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.orange,
-        brightness: Brightness.dark,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange, brightness: Brightness.dark),
     ),
   ];
 
