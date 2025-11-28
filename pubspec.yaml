@@ -66,7 +66,7 @@ flutter:
 
   # Assets
   assets:
-    - .env
+    # - .env
     - images/top-bg.svg
     - images/left-bg.svg
     - images/icons/notif.svg
@@ -81,6 +81,8 @@ flutter:
     - images/new-task-added.svg
     - images/not-found.svg
     - images/icons/pencil.svg
+    - images/logout-modal.svg
+    - images/onboard-pic.svg
 
   # Custom fonts
   fonts:

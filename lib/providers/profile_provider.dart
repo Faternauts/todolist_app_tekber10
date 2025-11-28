@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_profile.dart';
 
 class ProfileProvider with ChangeNotifier {
-  UserProfile _profile = UserProfile(name: 'User');
+  UserProfile _profile = UserProfile(name: 'Kristin W');
 
   UserProfile get profile => _profile;
 
@@ -21,13 +21,13 @@ class ProfileProvider with ChangeNotifier {
   // Save profile to SharedPreferences
   Future<void> _saveProfile() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('profile', jsonEncode(_profile.toJson()));
+    await prefs.setString('profile_v3', jsonEncode(_profile.toJson()));
   }
 
   // Load profile from SharedPreferences
   Future<void> loadProfile() async {
     final prefs = await SharedPreferences.getInstance();
-    final profileString = prefs.getString('profile');
+    final profileString = prefs.getString('profile_v3');
     if (profileString != null) {
       _profile = UserProfile.fromJson(jsonDecode(profileString));
       notifyListeners();

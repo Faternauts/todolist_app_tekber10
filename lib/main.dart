@@ -9,6 +9,7 @@ import 'providers/profile_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/debug_wrapper.dart';
+import 'screens/onboarding_screen.dart';
 
 void main() async {
   // Add error boundary
@@ -31,6 +32,7 @@ void main() async {
       );
 
       // Auto-login
+      /*
       try {
         await Supabase.instance.client.auth.signInWithPassword(
           email: SupabaseConfig.adminEmail,
@@ -40,6 +42,7 @@ void main() async {
       } catch (e) {
         print('⚠️ Auto-login failed: $e');
       }
+      */
 
       final taskProvider = TaskProvider();
       final profileProvider = ProfileProvider();
@@ -92,7 +95,7 @@ class MyApp extends StatelessWidget {
           theme: themeProvider.lightTheme,
           darkTheme: themeProvider.darkTheme,
           themeMode: themeProvider.themeMode,
-          home: const DebugWrapper(screenName: 'HomeScreen', child: HomeScreen()),
+          home: const OnboardingScreen(),
           builder: (context, child) {
             // Error boundary widget
             ErrorWidget.builder = (FlutterErrorDetails details) {

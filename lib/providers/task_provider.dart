@@ -18,7 +18,7 @@ class TaskProvider with ChangeNotifier {
   }
 
   List<Task> get ongoingTasks => allTasks.where((task) => task.status == TaskStatus.ongoing).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
-  List<Task> get completedTasks => allTasks.where((task) => task.status == TaskStatus.completed).toList()..sort((a, b) => b.completedAt!.compareTo(a.completedAt!));
+  List<Task> get completedTasks => allTasks.where((task) => task.status == TaskStatus.completed).toList()..sort((a, b) => (b.completedAt ?? b.createdAt).compareTo(a.completedAt ?? a.createdAt));
   List<Task> get missedTasks => allTasks.where((task) => task.status == TaskStatus.missed).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
   // Add task
   Future<void> addTask(Task task) async {
