@@ -1,10 +1,13 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/task.dart';
+import '../services/supabase_service.dart';
+import '../config/supabase_config.dart';
 
 class TaskProvider with ChangeNotifier {
   List<Task> _tasks = [];
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
 
   List<Task> get allTasks {
     // Update status for all tasks
@@ -28,61 +31,284 @@ class TaskProvider with ChangeNotifier {
 
   // Add task
   Future<void> addTask(Task task) async {
-    _tasks.add(task);
-    await _saveTasks();
-    notifyListeners();
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      // Map status enum ke string sesuai Supabase enum
+      String statusString;
+      switch (task.status) {
+        case TaskStatus.ongoing:
+          statusString = 'ongoing';
+          break;
+        case TaskStatus.completed:
+          statusString = 'completed';
+          break;
+        case TaskStatus.missed:
+          statusString = 'missed';
+          break;
+      }
+
+      // Map priority enum ke string sesuai Supabase enum
+      String priorityString;
+      switch (task.priority) {
+        case TaskPriority.low:
+          priorityString = 'low';
+          break;
+        case TaskPriority.medium:
+          priorityString = 'medium';
+          break;
+        case TaskPriority.high:
+          priorityString = 'high';
+          break;
+      }
+
+      final taskData = {
+        'user_id': SupabaseConfig.adminUserId,
+        'title': task.title,
+        'description': task.description,
+        'start_date': task.startDate?.toIso8601String().split('T')[0], // format date only
+        'due_date': task.deadline.toIso8601String().split('T')[0], // format date only
+        'status': statusString,
+        'priority': priorityString,
+        'duration_minutes': 30, // default 30 menit
+        'steps': task.steps ?? [],
+      };
+
+      final response = await supabase.from('notes').insert(taskData).select().single();
+      
+      // Update task id dengan uuid dari Supabase
+      final newTask = Task(
+        id: response['id'],
+        title: task.title,
+        description: task.description,
+        startDate: task.startDate,
+        deadline: task.deadline,
+        status: task.status,
+        priority: task.priority,
+        createdAt: DateTime.parse(response['created_at']),
+        completedAt: task.completedAt,
+        steps: task.steps,
+      );
+      
+      _tasks.add(newTask);
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Error adding task: $e');
+      rethrow;
+    }
   }
 
   // Update task
   Future<void> updateTask(String id, Task updatedTask) async {
-    final index = _tasks.indexWhere((task) => task.id == id);
-    if (index != -1) {
-      _tasks[index] = updatedTask;
-      await _saveTasks();
+    try {
+      _isLoading = true;
       notifyListeners();
+
+      // Map status enum ke string
+      String statusString;
+      switch (updatedTask.status) {
+        case TaskStatus.ongoing:
+          statusString = 'ongoing';
+          break;
+        case TaskStatus.completed:
+          statusString = 'completed';
+          break;
+        case TaskStatus.missed:
+          statusString = 'missed';
+          break;
+      }
+
+      // Map priority enum ke string
+      String priorityString;
+      switch (updatedTask.priority) {
+        case TaskPriority.low:
+          priorityString = 'low';
+          break;
+        case TaskPriority.medium:
+          priorityString = 'medium';
+          break;
+        case TaskPriority.high:
+          priorityString = 'high';
+          break;
+      }
+
+      final taskData = {
+        'title': updatedTask.title,
+        'description': updatedTask.description,
+        'start_date': updatedTask.startDate?.toIso8601String().split('T')[0],
+        'due_date': updatedTask.deadline.toIso8601String().split('T')[0],
+        'status': statusString,
+        'priority': priorityString,
+        'steps': updatedTask.steps ?? [],
+      };
+
+      await supabase.from('notes').update(taskData).eq('id', id);
+
+      final index = _tasks.indexWhere((task) => task.id == id);
+      if (index != -1) {
+        _tasks[index] = updatedTask;
+      }
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Error updating task: $e');
+      rethrow;
     }
   }
 
   // Delete task
   Future<void> deleteTask(String id) async {
-    _tasks.removeWhere((task) => task.id == id);
-    await _saveTasks();
-    notifyListeners();
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      await supabase.from('notes').delete().eq('id', id);
+      _tasks.removeWhere((task) => task.id == id);
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Error deleting task: $e');
+      rethrow;
+    }
   }
 
   // Delete multiple tasks
   Future<void> deleteTasks(List<String> ids) async {
-    _tasks.removeWhere((task) => ids.contains(task.id));
-    await _saveTasks();
-    notifyListeners();
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      for (final id in ids) {
+        await supabase.from('notes').delete().eq('id', id);
+      }
+      _tasks.removeWhere((task) => ids.contains(task.id));
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Error deleting tasks: $e');
+      rethrow;
+    }
   }
 
   // Mark task as completed
   Future<void> markAsCompleted(String id) async {
-    final index = _tasks.indexWhere((task) => task.id == id);
-    if (index != -1) {
-      _tasks[index].status = TaskStatus.completed;
-      _tasks[index].completedAt = DateTime.now();
-      await _saveTasks();
+    try {
+      _isLoading = true;
       notifyListeners();
+
+      final now = DateTime.now();
+      await supabase.from('notes').update({
+        'status': 'completed',
+      }).eq('id', id);
+
+      final index = _tasks.indexWhere((task) => task.id == id);
+      if (index != -1) {
+        _tasks[index].status = TaskStatus.completed;
+        _tasks[index].completedAt = now;
+      }
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Error marking task as completed: $e');
+      rethrow;
     }
   }
 
-  // Save tasks to SharedPreferences
-  Future<void> _saveTasks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final tasksJson = _tasks.map((task) => task.toJson()).toList();
-    await prefs.setString('tasks', jsonEncode(tasksJson));
-  }
-
-  // Load tasks from SharedPreferences
+  // Load tasks from Supabase
   Future<void> loadTasks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final tasksString = prefs.getString('tasks');
-    if (tasksString != null) {
-      final List<dynamic> tasksJson = jsonDecode(tasksString);
-      _tasks = tasksJson.map((json) => Task.fromJson(json)).toList();
+    try {
+      _isLoading = true;
       notifyListeners();
+
+      final response = await supabase
+          .from('notes')
+          .select()
+          .eq('user_id', SupabaseConfig.adminUserId)
+          .order('created_at', ascending: false);
+
+      _tasks = (response as List).map((json) {
+        // Map string status dari Supabase ke enum
+        TaskStatus status;
+        switch (json['status']) {
+          case 'ongoing':
+            status = TaskStatus.ongoing;
+            break;
+          case 'completed':
+            status = TaskStatus.completed;
+            break;
+          case 'missed':
+            status = TaskStatus.missed;
+            break;
+          default:
+            status = TaskStatus.ongoing;
+        }
+
+        // Map string priority dari Supabase ke enum
+        TaskPriority priority;
+        switch (json['priority']) {
+          case 'low':
+            priority = TaskPriority.low;
+            break;
+          case 'medium':
+            priority = TaskPriority.medium;
+            break;
+          case 'high':
+            priority = TaskPriority.high;
+            break;
+          default:
+            priority = TaskPriority.medium;
+        }
+
+        // Parse date dari Supabase (format: YYYY-MM-DD)
+        DateTime deadline;
+        if (json['due_date'] != null) {
+          deadline = DateTime.parse(json['due_date']);
+        } else {
+          deadline = DateTime.now().add(Duration(days: 1));
+        }
+
+        DateTime? startDate;
+        if (json['start_date'] != null) {
+          startDate = DateTime.parse(json['start_date']);
+        }
+
+        return Task(
+          id: json['id'],
+          title: json['title'],
+          description: json['description'] ?? '',
+          startDate: startDate,
+          deadline: deadline,
+          status: status,
+          priority: priority,
+          createdAt: DateTime.parse(json['created_at']),
+          completedAt: null, // notes table tidak punya completed_at
+          steps: json['steps'] != null && json['steps'] is List
+              ? List<String>.from(json['steps'])
+              : null,
+        );
+      }).toList();
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Error loading tasks: $e');
     }
   }
 
