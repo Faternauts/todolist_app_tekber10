@@ -1,14 +1,20 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'config/supabase_config.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'providers/task_provider.dart';
 import 'providers/profile_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
+import 'screens/debug_wrapper.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // Add error boundary
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
     url: SupabaseConfig.supabaseUrl,
@@ -34,16 +40,47 @@ void main() async {
     profileProvider.loadProfile(),
     themeProvider.loadTheme(),
   ]);
+      // Load .env file (with error handling for web)
+      try {
+        await dotenv.load(fileName: ".env");
+        print('✅ .env file loaded successfully');
+      } catch (e) {
+        print('⚠️ Warning: Could not load .env file: $e');
+        // Continue without .env file (will use fallback AI)
+      }
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: taskProvider),
-        ChangeNotifierProvider.value(value: profileProvider),
-        ChangeNotifierProvider.value(value: themeProvider),
-      ],
-      child: const MyApp(),
-    ),
+      final taskProvider = TaskProvider();
+      final profileProvider = ProfileProvider();
+      final themeProvider = ThemeProvider();
+
+      // Load data from SharedPreferences with error handling
+      try {
+        await Future.wait([taskProvider.loadTasks(), profileProvider.loadProfile(), themeProvider.loadTheme()]);
+        print('✅ Data loaded successfully');
+      } catch (e) {
+        print('⚠️ Warning: Could not load data: $e');
+        // Continue with default values
+      }
+
+      print('🚀 Starting app...');
+
+      runApp(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: taskProvider),
+            ChangeNotifierProvider.value(value: profileProvider),
+            ChangeNotifierProvider.value(value: themeProvider),
+          ],
+          child: const MyApp(),
+        ),
+      );
+
+      print('✅ App started successfully');
+    },
+    (error, stack) {
+      print('❌ Fatal error: $error');
+      print('Stack trace: $stack');
+    },
   );
 }
 
@@ -60,7 +97,37 @@ class MyApp extends StatelessWidget {
           theme: themeProvider.lightTheme,
           darkTheme: themeProvider.darkTheme,
           themeMode: themeProvider.themeMode,
-          home: const HomeScreen(),
+          home: const DebugWrapper(screenName: 'HomeScreen', child: HomeScreen()),
+          builder: (context, child) {
+            // Error boundary widget
+            ErrorWidget.builder = (FlutterErrorDetails details) {
+              return Material(
+                child: Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                          const SizedBox(height: 16),
+                          const Text('Oops! Something went wrong', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Text(
+                            details.exception.toString(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            };
+            return child ?? const SizedBox();
+          },
         );
       },
     );

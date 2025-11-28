@@ -41,6 +41,7 @@ dependencies:
   http: ^1.1.0
   flutter_svg: ^2.0.9
   supabase_flutter: ^2.5.0
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -65,11 +66,21 @@ flutter:
 
   # Assets
   assets:
+    - .env
     - images/top-bg.svg
     - images/left-bg.svg
     - images/icons/notif.svg
     - images/icons/filter.svg
     - images/icons/lens.svg
+    - images/icons/home.svg
+    - images/icons/home-active.svg
+    - images/icons/calendar.svg
+    - images/icons/inbox.svg
+    - images/icons/settings.svg
+    - images/icons/setting-activate.svg
+    - images/new-task-added.svg
+    - images/not-found.svg
+    - images/icons/pencil.svg
 
   # Custom fonts
   fonts:

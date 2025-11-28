@@ -167,7 +167,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               'Hello, Kristin W',
                               style: AppTextStyles.h2.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                             ),
-                            Text(today, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
+                            Text(
+                              today,
+                              style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+                            ),
                           ],
                         ),
 
@@ -243,10 +246,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       // Category tabs
                       SizedBox(
-                        height: 40,
+                        height: 28,
                         child: ListView(
                           scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                           children: [
                             _buildCategoryTab('All'),
                             const SizedBox(width: AppSpacing.sm),
@@ -272,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.inbox_outlined, size: 64, color: AppColors.textHint),
+                                    SvgPicture.asset('images/not-found.svg', width: 64, height: 64, colorFilter: const ColorFilter.mode(AppColors.textHint, BlendMode.srcIn)),
                                     const SizedBox(height: AppSpacing.md),
                                     Text('No tasks found', style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary)),
                                     const SizedBox(height: AppSpacing.sm),
@@ -315,15 +318,11 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryDark : Colors.white,
-          borderRadius: BorderRadius.circular(AppRadius.full),
-          border: Border.all(color: isSelected ? AppColors.primaryDark : const Color(0xFFE5E7EB)),
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+        decoration: BoxDecoration(color: isSelected ? AppColors.primaryDark : const Color.fromARGB(255, 250, 249, 249), borderRadius: BorderRadius.circular(AppRadius.full)),
         child: Text(
           label,
-          style: const TextStyle(fontSize: 14, color: Colors.black87, fontWeight: FontWeight.w500, fontFamily: 'SFProDisplay').copyWith(color: isSelected ? Colors.white : AppColors.textSecondary),
+          style: const TextStyle(fontSize: 12, color: Colors.black87, fontWeight: FontWeight.w500, fontFamily: 'SFProDisplay').copyWith(color: isSelected ? Colors.white : AppColors.textSecondary),
         ),
       ),
     );
@@ -377,18 +376,18 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(Icons.home, 'Home', 0),
-            _buildNavItem(Icons.calendar_today, 'Upcoming', 1),
+            _buildNavItem('images/icons/home.svg', 'images/icons/home-active.svg', 'Home', 0),
+            _buildNavItem('images/icons/calendar.svg', 'images/icons/calendar.svg', 'Upcoming', 1),
             _buildCenterAddButton(),
-            _buildNavItem(Icons.inbox, 'Inbox', 3),
-            _buildNavItem(Icons.settings, 'Settings', 4),
+            _buildNavItem('images/icons/inbox.svg', 'images/icons/inbox.svg', 'Inbox', 3),
+            _buildNavItem('images/icons/settings.svg', 'images/icons/setting-activate.svg', 'Settings', 4),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  Widget _buildNavItem(String svgIcon, String svgIconActive, String label, int index) {
     final isActive = _selectedBottomNav == index;
 
     return GestureDetector(
@@ -405,11 +404,11 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: isActive ? AppColors.primaryDark : AppColors.textHint, size: 24),
+          SvgPicture.asset(isActive ? svgIconActive : svgIcon, width: 24, height: 24, colorFilter: ColorFilter.mode(isActive ? AppColors.accentPurple : AppColors.textHint, BlendMode.srcIn)),
           const SizedBox(height: 4),
           Text(
             label,
-            style: AppTextStyles.caption.copyWith(color: isActive ? AppColors.primaryDark : AppColors.textHint, fontWeight: isActive ? FontWeight.bold : FontWeight.w500),
+            style: AppTextStyles.caption.copyWith(color: isActive ? AppColors.accentPurple : AppColors.textHint, fontWeight: isActive ? FontWeight.bold : FontWeight.w500),
           ),
         ],
       ),
@@ -423,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
         width: 56,
         height: 56,
         decoration: const BoxDecoration(
-          color: AppColors.primaryDark, // Dark purple circle
+          color: AppColors.accentPurple,
           shape: BoxShape.circle,
           boxShadow: [AppShadows.medium],
         ),

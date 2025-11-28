@@ -121,18 +121,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           boxShadow: const [AppShadows.medium],
                         ),
                         child: CircleAvatar(
-                          radius: 60,
+                        radius: 60,
                           backgroundColor: AppColors.primaryLight,
-                          backgroundImage: photoPath != null
-                              ? FileImage(File(photoPath))
-                              : null,
-                          child: photoPath == null
+                        backgroundImage: photoPath != null
+                            ? FileImage(File(photoPath))
+                            : null,
+                        child: photoPath == null
                               ? const Icon(
                                   Icons.person,
                                   size: 60,
                                   color: AppColors.primaryDark,
                                 )
-                              : null,
+                            : null,
                         ),
                       );
                     },
@@ -233,10 +233,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: _saveProfile,
-                icon: const Icon(Icons.save),
-                label: const Text('Save Profile'),
-                style: ElevatedButton.styleFrom(
+              onPressed: _saveProfile,
+              icon: const Icon(Icons.save),
+              label: const Text('Save Profile'),
+              style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryPurple,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
