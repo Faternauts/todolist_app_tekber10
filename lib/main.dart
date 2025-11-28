@@ -16,50 +16,45 @@ void main() async {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
-  await Supabase.initialize(
-    url: SupabaseConfig.supabaseUrl,
-    anonKey: SupabaseConfig.supabaseAnonKey,
-  );
-
-  try {
-    await Supabase.instance.client.auth.signInWithPassword(
-      email: SupabaseConfig.adminEmail,
-      password: SupabaseConfig.adminPassword,
-    );
-    print('Auto-login successful');
-  } catch (e) {
-    print('Auto-login failed: $e');
-  }
-
-  final taskProvider = TaskProvider();
-  final profileProvider = ProfileProvider();
-  final themeProvider = ThemeProvider();
-
-  await Future.wait([
-    taskProvider.loadTasks(),
-    profileProvider.loadProfile(),
-    themeProvider.loadTheme(),
-  ]);
       // Load .env file (with error handling for web)
       try {
         await dotenv.load(fileName: ".env");
         print('✅ .env file loaded successfully');
       } catch (e) {
         print('⚠️ Warning: Could not load .env file: $e');
-        // Continue without .env file (will use fallback AI)
+      }
+
+      // Initialize Supabase
+      await Supabase.initialize(
+        url: SupabaseConfig.supabaseUrl,
+        anonKey: SupabaseConfig.supabaseAnonKey,
+      );
+
+      // Auto-login
+      try {
+        await Supabase.instance.client.auth.signInWithPassword(
+          email: SupabaseConfig.adminEmail,
+          password: SupabaseConfig.adminPassword,
+        );
+        print('✅ Auto-login successful');
+      } catch (e) {
+        print('⚠️ Auto-login failed: $e');
       }
 
       final taskProvider = TaskProvider();
       final profileProvider = ProfileProvider();
       final themeProvider = ThemeProvider();
 
-      // Load data from SharedPreferences with error handling
+      // Load data
       try {
-        await Future.wait([taskProvider.loadTasks(), profileProvider.loadProfile(), themeProvider.loadTheme()]);
+        await Future.wait([
+          taskProvider.loadTasks(),
+          profileProvider.loadProfile(),
+          themeProvider.loadTheme(),
+        ]);
         print('✅ Data loaded successfully');
       } catch (e) {
         print('⚠️ Warning: Could not load data: $e');
-        // Continue with default values
       }
 
       print('🚀 Starting app...');
