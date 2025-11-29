@@ -110,7 +110,7 @@ class ProfileScreen extends StatelessWidget {
                                             ),
                                             const SizedBox(height: 4),
                                             const Text(
-                                              'kristin@email.com', // Placeholder
+                                              'kristin@gmail.com', // Placeholder
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.grey,
