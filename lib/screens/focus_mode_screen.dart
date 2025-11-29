@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../models/task.dart';
 import '../providers/task_provider.dart';
-import 'add_edit_task_screen.dart';
+import '../widgets/edit_task_bottom_sheet.dart';
 
 class FocusModeScreen extends StatefulWidget {
   final Task task;
@@ -267,8 +267,19 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                 ),
                                 child: IconButton(
                                   icon: SvgPicture.asset('images/icons/pencil.svg', width: 22, height: 22, colorFilter: const ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn)),
-                                  onPressed: () {
-                                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddEditTaskScreen(task: widget.task)));
+                                  onPressed: () async {
+                                    final updatedTask = await EditTaskBottomSheet.show(context, widget.task);
+                                    if (updatedTask != null && mounted) {
+                                      // Update widget.task with the new data by rebuilding
+                                      setState(() {
+                                        widget.task.title = updatedTask.title;
+                                        widget.task.description = updatedTask.description;
+                                        widget.task.startDate = updatedTask.startDate;
+                                        widget.task.deadline = updatedTask.deadline;
+                                        widget.task.priority = updatedTask.priority;
+                                        widget.task.steps = updatedTask.steps;
+                                      });
+                                    }
                                   },
                                 ),
                               ),
