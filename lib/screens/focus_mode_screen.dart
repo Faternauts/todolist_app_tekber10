@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../models/task.dart';
@@ -21,6 +22,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
   late int _remainingSeconds;
   bool _isTimerRunning = false;
   final Set<int> _completedSteps = {};
+  bool _showDetails = false;
 
   @override
   void initState() {
@@ -87,6 +89,32 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
     final minutes = seconds ~/ 60;
     final remainingSeconds = seconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  Color _getPriorityColor() {
+    switch (widget.task.priority) {
+      case TaskPriority.high:
+        return AppColors.priorityHigh;
+      case TaskPriority.medium:
+        return Colors.orange;
+      case TaskPriority.low:
+        return Colors.blue;
+    }
+  }
+
+  String _formatDeadline(DateTime deadline) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final deadlineDate = DateTime(deadline.year, deadline.month, deadline.day);
+
+    if (deadlineDate == today) {
+      return 'Today';
+    } else if (deadlineDate == tomorrow) {
+      return 'Tomorrow';
+    } else {
+      return DateFormat('dd MMM yyyy').format(deadline);
+    }
   }
 
   Future<void> _completeTask() async {
@@ -222,7 +250,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                   SafeArea(
                     bottom: false,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.xl),
+                      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.md),
                       child: Column(
                         children: [
                           // Navigation row
@@ -285,39 +313,41 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.md),
                           // Task Title
                           Text(
                             widget.task.title,
                             style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.md),
                           // Timer Card
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(AppSpacing.xl),
-                            decoration: BoxDecoration(
-                              color: Colors.deepPurple,
-                              borderRadius: BorderRadius.circular(AppRadius.xxl),
-                              boxShadow: [BoxShadow(color: AppColors.accentBlue.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 8))],
-                            ),
-                            child: Column(
-                              children: [
-                                Text(_formatTime(_remainingSeconds), style: AppTextStyles.timer.copyWith(color: Colors.white)),
-                                const SizedBox(height: AppSpacing.lg),
-                                ElevatedButton.icon(
-                                  onPressed: _toggleTimer,
-                                  icon: Icon(_isTimerRunning ? Icons.pause : Icons.play_arrow, size: 18),
-                                  label: Text(_isTimerRunning ? 'Pause Focus' : 'Start Focus', style: AppTextStyles.button),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white.withOpacity(0.2),
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.full)),
+                          Center(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.lg),
+                              decoration: BoxDecoration(
+                                color: Colors.deepPurple,
+                                borderRadius: BorderRadius.circular(AppRadius.xxl),
+                                boxShadow: [BoxShadow(color: AppColors.accentBlue.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 8))],
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(_formatTime(_remainingSeconds), style: AppTextStyles.h3.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: AppSpacing.xs),
+                                  ElevatedButton.icon(
+                                    onPressed: _toggleTimer,
+                                    icon: Icon(_isTimerRunning ? Icons.pause : Icons.play_arrow, size: 16),
+                                    label: Text(_isTimerRunning ? 'Pause Focus' : 'Start Focus', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white)),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white.withOpacity(0.2),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.full)),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -328,10 +358,9 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
               ),
             ),
           ),
-
           // Estimated time & motivation text
           Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
             child: Column(
               children: [
                 if (widget.task.totalEstimatedMinutes != null) ...[
@@ -350,7 +379,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.xs),
                 ],
                 Text(
                   'One step at a time.',
@@ -359,6 +388,89 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
               ],
             ),
           ),
+          // Details Section with Dividers
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+            child: Column(
+              children: [
+                const Divider(height: 1, color: Color(0xFFF3F4F6)),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _showDetails = !_showDetails;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: AppSpacing.md),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Details', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                        Icon(
+                          _showDetails ? Icons.expand_less : Icons.expand_more,
+                          color: AppColors.textSecondary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(height: 1, color: Color(0xFFF3F4F6)),
+                if (_showDetails) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Due Date Row
+                        Row(
+                          children: [
+                            const Icon(Icons.calendar_today, size: 18, color: AppColors.textSecondary),
+                            const SizedBox(width: AppSpacing.md),
+                            Text('Due', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                            const SizedBox(width: AppSpacing.md),
+                            Text(
+                              _formatDeadline(widget.task.deadline),
+                              style: AppTextStyles.bodySmall.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        // Priority Row
+                        Row(
+                          children: [
+                            const Icon(Icons.flag, size: 18, color: AppColors.textSecondary),
+                            const SizedBox(width: AppSpacing.md),
+                            Text('Priority', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                            const SizedBox(width: AppSpacing.md),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+                              decoration: BoxDecoration(
+                                color: _getPriorityColor().withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(AppRadius.full),
+                              ),
+                              child: Text(
+                                widget.task.priority.name.toUpperCase(),
+                                style: AppTextStyles.caption.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: _getPriorityColor(),
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1, color: Color(0xFFF3F4F6)),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
 
           // Steps List
           Expanded(
@@ -470,20 +582,126 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
             ),
             child: SafeArea(
               top: false,
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _completeTask,
-                  icon: const Icon(Icons.emoji_events),
-                  label: const Text('Finish Steps to Complete'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF3F4F6),
-                    foregroundColor: AppColors.textSecondary,
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
-                    elevation: 0,
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: _completeTask,
+                      icon: const Icon(Icons.emoji_events),
+                      label: const Text('Finish Steps to Complete'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF3F4F6),
+                        foregroundColor: AppColors.textSecondary,
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
+                        elevation: 0,
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => Dialog(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Illustration
+                                  SvgPicture.asset(
+                                    'images/delete-task.svg',
+                                    width: 80,
+                                    height: 80,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  // Title
+                                  Text(
+                                    'Are you sure you want to\ndelete this task?',
+                                    textAlign: TextAlign.center,
+                                    style: AppTextStyles.h3.copyWith(
+                                      color: AppColors.textPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  // Buttons
+                                  Row(
+                                    children: [
+                                      // Delete button (outlined)
+                                      Expanded(
+                                        child: OutlinedButton(
+                                          onPressed: () => Navigator.of(context).pop(true),
+                                          style: OutlinedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(vertical: 14),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(30),
+                                            ),
+                                            side: BorderSide(color: AppColors.borderLight),
+                                          ),
+                                          child: Text(
+                                            'Delete',
+                                            style: AppTextStyles.button.copyWith(color: AppColors.textPrimary),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      // Cancel button (filled)
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () => Navigator.of(context).pop(false),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.primaryDark,
+                                            padding: const EdgeInsets.symmetric(vertical: 14),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(30),
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          child: Text(
+                                            'Cancel',
+                                            style: AppTextStyles.button.copyWith(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                        if (confirmed == true && mounted) {
+                          final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+                          await taskProvider.deleteTask(widget.task.id);
+                          if (mounted) {
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Task deleted'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.delete),
+                      label: const Text('Delete Task'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
+                        elevation: 0,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
