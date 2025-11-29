@@ -9,8 +9,17 @@ class ProfileProvider with ChangeNotifier {
   UserProfile get profile => _profile;
 
   // Update profile
-  Future<void> updateProfile(String name, String? photoPath) async {
+  Future<void> updateProfile(
+    String name,
+    String email,
+    String preference,
+    List<String> plannerFor, {
+    String? photoPath,
+  }) async {
     _profile.name = name;
+    _profile.email = email;
+    _profile.preference = preference;
+    _profile.plannerFor = plannerFor;
     if (photoPath != null) {
       _profile.photoPath = photoPath;
     }
