@@ -307,4 +307,65 @@ class TaskProvider with ChangeNotifier {
       return null;
     }
   }
+  // Get weekly statistics
+  WeeklyStats getWeeklyStats() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final startOfWeek = today.subtract(Duration(days: now.weekday - 1));
+    final endOfWeek = startOfWeek.add(const Duration(days: 7));
+    
+    final startOfPreviousWeek = startOfWeek.subtract(const Duration(days: 7));
+    final endOfPreviousWeek = startOfWeek;
+
+    // Initialize counts
+    List<int> dailyCounts = List.filled(7, 0);
+    int currentWeekTotal = 0;
+    int previousWeekTotal = 0;
+
+    for (var task in allTasks) {
+      final createdAt = task.createdAt;
+      
+      // Check if task is in current week
+      if (createdAt.compareTo(startOfWeek) >= 0 && createdAt.isBefore(endOfWeek)) {
+        final dayIndex = createdAt.weekday - 1;
+        dailyCounts[dayIndex]++;
+        currentWeekTotal++;
+      }
+      
+      // Check if task is in previous week
+      if (createdAt.compareTo(startOfPreviousWeek) >= 0 && createdAt.isBefore(endOfPreviousWeek)) {
+        previousWeekTotal++;
+      }
+    }
+
+    // Calculate progress
+    double progress = 0;
+    if (previousWeekTotal > 0) {
+      progress = ((currentWeekTotal - previousWeekTotal) / previousWeekTotal) * 100;
+    } else if (currentWeekTotal > 0) {
+      progress = 100;
+    }
+
+    // Find max for scaling
+    int maxCount = dailyCounts.reduce((curr, next) => curr > next ? curr : next);
+    if (maxCount == 0) maxCount = 1;
+
+    return WeeklyStats(
+      dailyCounts: dailyCounts,
+      progress: progress,
+      maxCount: maxCount,
+    );
+  }
+}
+
+class WeeklyStats {
+  final List<int> dailyCounts;
+  final double progress;
+  final int maxCount;
+
+  WeeklyStats({
+    required this.dailyCounts,
+    required this.progress,
+    required this.maxCount,
+  });
 }

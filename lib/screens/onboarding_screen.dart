@@ -10,7 +10,7 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDAC3EF), // --Second-purple-600
+      backgroundColor: AppColors.onboardingBackground, // --Second-purple-600
       body: Stack(
         children: [
           // Top Right Decorative SVG (CustomPainter)
@@ -78,7 +78,7 @@ class OnboardingScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600, // 590 in Figma
-                          color: Color(0xFF3C244E), // --Primary-purple-900
+                          color: AppColors.textDarkPurple, // --Primary-purple-900
                           letterSpacing: -0.32,
                           fontFamily: AppTextStyles.fontFamily,
                         ),
@@ -107,7 +107,7 @@ class OnboardingScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xFF717171), // --Monochrome-600
+                      color: AppColors.textGrey, // --Monochrome-600
                       height: 1.5,
                       letterSpacing: -0.32,
                       fontFamily: AppTextStyles.fontFamily,
@@ -126,7 +126,7 @@ class OnboardingScreen extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF9759C4), // --Primary-purple-600
+                        backgroundColor: AppColors.accentPurple, // --Primary-purple-600
                         foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -158,7 +158,7 @@ class OnboardingScreen extends StatelessWidget {
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.black,
-                        side: const BorderSide(color: Color(0xFFEEEEEE)), // --Monochrome-100
+                        side: const BorderSide(color: AppColors.borderLighter), // --Monochrome-100
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(100),
                         ),

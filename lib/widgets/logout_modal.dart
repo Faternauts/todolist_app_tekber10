@@ -64,7 +64,7 @@ class LogoutModal extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFD94838), // Red color
+                        backgroundColor: AppColors.buttonDanger, // Red color
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),

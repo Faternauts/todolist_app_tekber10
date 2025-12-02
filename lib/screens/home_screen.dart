@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_theme.dart';
 import '../providers/task_provider.dart';
-
+import '../providers/profile_provider.dart';
 import '../models/task.dart';
 import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/success_modal.dart';

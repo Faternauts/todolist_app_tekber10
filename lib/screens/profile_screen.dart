@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../providers/profile_provider.dart';
 import '../providers/task_provider.dart';
 import '../constants/app_theme.dart';
 import '../widgets/logout_modal.dart';
-import 'sign_in_screen.dart';
+
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -110,7 +110,7 @@ class ProfileScreen extends StatelessWidget {
                                             ),
                                             const SizedBox(height: 4),
                                             const Text(
-                                              'kristin@gmail.com', // Placeholder
+                                              'User@mail.com', // Placeholder
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.grey,
@@ -184,46 +184,10 @@ class ProfileScreen extends StatelessWidget {
                               // Weekly Statistics
                               Consumer<TaskProvider>(
                                 builder: (context, taskProvider, child) {
-                                  final now = DateTime.now();
-                                  final today = DateTime(now.year, now.month, now.day);
-                                  final startOfWeek = today.subtract(Duration(days: now.weekday - 1));
-                                  final endOfWeek = startOfWeek.add(const Duration(days: 7));
-                                  
-                                  final startOfPreviousWeek = startOfWeek.subtract(const Duration(days: 7));
-                                  final endOfPreviousWeek = startOfWeek;
-
-                                  // Initialize counts
-                                  List<int> dailyCounts = List.filled(7, 0);
-                                  int currentWeekTotal = 0;
-                                  int previousWeekTotal = 0;
-
-                                  for (var task in taskProvider.allTasks) {
-                                    final createdAt = task.createdAt;
-                                    
-                                    // Check if task is in current week
-                                    if (createdAt.compareTo(startOfWeek) >= 0 && createdAt.isBefore(endOfWeek)) {
-                                      final dayIndex = createdAt.weekday - 1;
-                                      dailyCounts[dayIndex]++;
-                                      currentWeekTotal++;
-                                    }
-                                    
-                                    // Check if task is in previous week
-                                    if (createdAt.compareTo(startOfPreviousWeek) >= 0 && createdAt.isBefore(endOfPreviousWeek)) {
-                                      previousWeekTotal++;
-                                    }
-                                  }
-
-                                  // Calculate progress
-                                  double progress = 0;
-                                  if (previousWeekTotal > 0) {
-                                    progress = ((currentWeekTotal - previousWeekTotal) / previousWeekTotal) * 100;
-                                  } else if (currentWeekTotal > 0) {
-                                    progress = 100;
-                                  }
-
-                                  // Find max for scaling
-                                  int maxCount = dailyCounts.reduce((curr, next) => curr > next ? curr : next);
-                                  if (maxCount == 0) maxCount = 1;
+                                  final stats = taskProvider.getWeeklyStats();
+                                  final dailyCounts = stats.dailyCounts;
+                                  final progress = stats.progress;
+                                  final maxCount = stats.maxCount;
 
                                   return Container(
                                     padding: const EdgeInsets.all(16),
