@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_theme.dart';
 import '../providers/task_provider.dart';
-import '../providers/profile_provider.dart';
+
 import '../models/task.dart';
 import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/success_modal.dart';
@@ -107,7 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
-      body: Column(
+      body: SafeArea(
+        child: Column(
           children: [
             // Header with gradient background and SVG decorations
             Container(
@@ -132,10 +133,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // Main content
-                  SafeArea(
-                    bottom: false,
-                    child: Padding(
-                    padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
                     child: Column(
                       children: [
                         // Top row with profile and notification
@@ -217,7 +216,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -316,6 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
 
       bottomNavigationBar: _buildBottomNav(),
     );
