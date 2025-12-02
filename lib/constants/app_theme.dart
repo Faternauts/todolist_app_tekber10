@@ -8,6 +8,7 @@ class AppColors {
   static const Color primaryLight = Color(0xFFE8E0F5); // Very light purple
   static const Color accentBlue = Color(0xFF6B7FE8); // Soft blue
   static const Color accentPurple = Color(0xFF9759C4); // Accent purple for links
+  static const Color onboardingBackground = Color(0xFFDAC3EF); // Light purple for onboarding background
 
   // Background Colors
   static const Color backgroundLight = Color(0xFFF6F4FA); // Light lavender background
@@ -16,6 +17,8 @@ class AppColors {
 
   // Text Colors
   static const Color textPrimary = Color.fromARGB(255, 52, 46, 84); // Almost black
+  static const Color textDarkPurple = Color(0xFF3C244E); // Dark purple text
+  static const Color textGrey = Color(0xFF717171); // Grey text
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color textHint = Color(0xFF9CA3AF);
 
@@ -34,6 +37,8 @@ class AppColors {
 
   // UI Elements
   static const Color borderLight = Color(0xFFE5E7EB);
+  static const Color borderLighter = Color(0xFFEEEEEE);
+  static const Color buttonDanger = Color(0xFFD94838); // Red for danger actions
   static const Color shadowColor = Color(0x1A000000);
 
   // Gradient Colors
