@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_profile.dart';
 
 class ProfileProvider with ChangeNotifier {
-  UserProfile _profile = UserProfile(name: 'Kristin W');
+  UserProfile _profile = UserProfile(name: 'User');
 
   UserProfile get profile => _profile;
 
