@@ -4,11 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_theme.dart';
 import '../providers/task_provider.dart';
+import '../providers/profile_provider.dart';
 import '../models/task.dart';
 import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/success_modal.dart';
 import 'focus_mode_screen.dart';
 import 'theme_settings_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -139,11 +141,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundColor: Colors.white,
-                              backgroundImage: const NetworkImage('https://i.pravatar.cc/150?img=1'),
-                              child: const Icon(Icons.person, color: AppColors.primaryDark, size: 20),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const ProfileScreen(),
+                                  ),
+                                );
+                              },
+                              child: CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.white,
+                                backgroundImage: const NetworkImage('https://i.pravatar.cc/150?img=1'),
+                                child: const Icon(Icons.person, color: AppColors.primaryDark, size: 20),
+                              ),
                             ),
                             Container(
                               width: 48,
@@ -204,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                  ),
+                    ),
                 ],
               ),
             ),
@@ -304,6 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+
       bottomNavigationBar: _buildBottomNav(),
     );
   }

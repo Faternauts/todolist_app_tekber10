@@ -82,6 +82,8 @@ flutter:
     - images/not-found.svg
     - images/icons/pencil.svg
     - images/delete-task.svg
+    - images/logout-modal.svg
+    - images/onboard-pic.svg
 
   # Custom fonts
   fonts:
