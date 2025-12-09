@@ -32,7 +32,7 @@ class AIService {
             url,
             headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $apiKey'},
             body: jsonEncode({
-              'model': 'gpt-4-turbo',
+              'model': 'gpt-4o-mini',
               'messages': messages,
               'response_format': {'type': 'json_object'},
               'temperature': 0.7,
