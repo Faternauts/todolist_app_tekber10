@@ -81,6 +81,7 @@ flutter:
     - images/new-task-added.svg
     - images/not-found.svg
     - images/icons/pencil.svg
+    - images/delete-task.svg
     - images/logout-modal.svg
     - images/onboard-pic.svg
 
