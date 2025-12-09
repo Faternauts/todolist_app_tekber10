@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../models/task.dart';
 import '../providers/task_provider.dart';
+import 'add_edit_task_screen.dart';
+import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/edit_task_bottom_sheet.dart';
 
 class FocusModeScreen extends StatefulWidget {
