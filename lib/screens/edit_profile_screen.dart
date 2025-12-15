@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_theme.dart';
 import '../providers/profile_provider.dart';
 import '../services/supabase_service.dart';
@@ -163,190 +164,256 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.primaryPurple,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            child: IconButton(
+              icon: const Icon(Icons.chevron_left, color: Colors.black, size: 24),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
         ),
+        centerTitle: true,
         title: const Text(
-          'Edit Profile',
+          'Edit profile',
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
+            color: Colors.black, // Title color in design seems dark/black? Or maybe white if on purple?
+            // Checking loaded image: It says "Edit profile" in dark text on purple bg? No, usually transparency.
+            // Let's look at the image again: "Edit profile" text is on the purple background.
+            // Actually in the uploaded image, the status bar is there, the header "Edit profile" is on the purple background.
+            // Wait, looking at the image provided in step 76:
+            // "Edit profile" is dark text? It looks like dark text on light purple.
+            fontSize: 16,
             fontWeight: FontWeight.w600,
             fontFamily: AppTextStyles.fontFamily,
           ),
         ),
-        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Avatar
-            GestureDetector(
-              onTap: _pickImage,
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Colors.grey[200],
-                    backgroundImage: _selectedImage != null
-                        ? FileImage(_selectedImage!)
-                        : (_currentPhotoUrl != null && _currentPhotoUrl!.isNotEmpty
-                            ? NetworkImage(_currentPhotoUrl!)
-                            : null) as ImageProvider?,
-                    child: (_selectedImage == null && (_currentPhotoUrl == null || _currentPhotoUrl!.isEmpty))
-                        ? const Icon(Icons.person, size: 60, color: Colors.grey)
-                        : null,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryPurple,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+      body: Stack(
+        children: [
+          // Background decoration
+          Positioned(
+            right: -40,
+            top: -40,
+            child: Opacity(
+              opacity: 0.8,
+              child: SvgPicture.asset(
+                'images/top-bg.svg',
+                width: 160,
+                height: 160,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          
+          SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                // AppBar spacer
+                const SizedBox(height: 20),
+                
+                // Main White Container
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
                       ),
-                      child: const Icon(
-                        Icons.camera_alt,
-                        color: Colors.white,
-                        size: 20,
+                    ),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 16),
+                          // Avatar
+                          GestureDetector(
+                            onTap: _pickImage,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 60,
+                                  backgroundColor: Colors.grey[200],
+                                  backgroundImage: _selectedImage != null
+                                      ? FileImage(_selectedImage!)
+                                      : (_currentPhotoUrl != null && _currentPhotoUrl!.isNotEmpty
+                                          ? NetworkImage(_currentPhotoUrl!)
+                                          : null) as ImageProvider?,
+                                  child: (_selectedImage == null && (_currentPhotoUrl == null || _currentPhotoUrl!.isEmpty))
+                                      ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                                      : null,
+                                ),
+                                // Overlay with camera icon centered
+                                Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.black.withOpacity(0.3),
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt_outlined,
+                                    color: Colors.white,
+                                    size: 32,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 32),
+              
+                          // Username field
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: const Text(
+                              'Username',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                                fontFamily: AppTextStyles.fontFamily,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _usernameController,
+                            decoration: InputDecoration(
+                              hintText: 'Enter username',
+                              hintStyle: const TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF9E9E9E),
+                                fontFamily: AppTextStyles.fontFamily,
+                              ),
+                              filled: true,
+                              fillColor: Colors.white, // In design it looks white with border? No, usually light grey or white with border.
+                              // Let's match the design: Simple rounded border.
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: const BorderSide(color: AppColors.primaryPurple),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+              
+                          // Age field
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: const Text(
+                              'Age (optional)',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                                fontFamily: AppTextStyles.fontFamily,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _ageController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText: 'Enter age',
+                              hintStyle: const TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF9E9E9E),
+                                fontFamily: AppTextStyles.fontFamily,
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: const BorderSide(color: AppColors.primaryPurple),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                          
+                          // Spacer to push button to bottom if needed, or just bottom padding
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: _pickImage,
-              child: const Text(
-                'Ubah foto profile',
-                style: TextStyle(
-                  color: AppColors.primaryPurple,
-                  fontFamily: AppTextStyles.fontFamily,
-                ),
+          ),
+        ],
+      ),
+      // Floating Save Button at the bottom
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(24),
+        color: Colors.white,
+        child: SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton(
+            onPressed: _isLoading ? null : _saveProfile,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF9759C4),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
               ),
+              disabledBackgroundColor: AppColors.primaryPurple.withOpacity(0.6),
             ),
-            const SizedBox(height: 32),
-
-            // Username field
-            Align(
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'Username',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                  fontFamily: AppTextStyles.fontFamily,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                hintText: 'Enter username',
-                hintStyle: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF9E9E9E),
-                  fontFamily: AppTextStyles.fontFamily,
-                ),
-                filled: true,
-                fillColor: const Color(0xFFF5F5F5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Age field
-            Align(
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'Age (optional)',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                  fontFamily: AppTextStyles.fontFamily,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _ageController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText: 'Enter age',
-                hintStyle: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF9E9E9E),
-                  fontFamily: AppTextStyles.fontFamily,
-                ),
-                filled: true,
-                fillColor: const Color(0xFFF5F5F5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-              ),
-            ),
-            const SizedBox(height: 40),
-
-            // Save button
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _saveProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPurple,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
+            child: _isLoading
+                ? const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Text(
+                    'Save',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: AppTextStyles.fontFamily,
+                    ),
                   ),
-                  disabledBackgroundColor: AppColors.primaryPurple.withOpacity(0.6),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : const Text(
-                        'Save Changes',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: AppTextStyles.fontFamily,
-                        ),
-                      ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

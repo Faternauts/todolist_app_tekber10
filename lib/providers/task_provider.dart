@@ -28,7 +28,7 @@ class TaskProvider with ChangeNotifier {
   }
   
   // Add task
-  Future<void> addTask(Task task) async {
+  Future<Task> addTask(Task task) async {
     try {
       _isLoading = true;
       notifyListeners();
@@ -97,6 +97,8 @@ class TaskProvider with ChangeNotifier {
       _tasks.add(newTask);
       _isLoading = false;
       notifyListeners();
+      
+      return newTask;
     } catch (e) {
       _isLoading = false;
       notifyListeners();
