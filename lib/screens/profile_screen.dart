@@ -6,6 +6,7 @@ import '../providers/profile_provider.dart';
 import '../providers/task_provider.dart';
 import '../constants/app_theme.dart';
 import '../widgets/logout_modal.dart';
+import 'edit_profile_screen.dart';
 
 
 class ProfileScreen extends StatelessWidget {
@@ -91,8 +92,13 @@ class ProfileScreen extends StatelessWidget {
                                     children: [
                                       CircleAvatar(
                                         radius: 50,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: const NetworkImage('https://i.pravatar.cc/150?img=1'),
+                                        backgroundColor: Colors.grey[200],
+                                        backgroundImage: (profile.photoPath != null && profile.photoPath!.isNotEmpty)
+                                            ? NetworkImage(profile.photoPath!)
+                                            : null,
+                                        child: (profile.photoPath == null || profile.photoPath!.isEmpty)
+                                            ? const Icon(Icons.person, size: 50, color: Colors.grey)
+                                            : null,
                                       ),
                                       const SizedBox(width: 24),
                                       Expanded(
@@ -109,9 +115,9 @@ class ProfileScreen extends StatelessWidget {
                                               ),
                                             ),
                                             const SizedBox(height: 4),
-                                            const Text(
-                                              'User@mail.com', // Placeholder
-                                              style: TextStyle(
+                                            Text(
+                                              profile.age != null ? '${profile.age} years old' : 'No age set',
+                                              style: const TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.grey,
                                                 fontFamily: AppTextStyles.fontFamily,
@@ -122,7 +128,12 @@ class ProfileScreen extends StatelessWidget {
                                               height: 40,
                                               child: ElevatedButton(
                                                 onPressed: () {
-                                                  // TODO: Navigate to Edit Profile
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (_) => const EditProfileScreen(),
+                                                    ),
+                                                  );
                                                 },
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor: const Color(0xFF9759C4),

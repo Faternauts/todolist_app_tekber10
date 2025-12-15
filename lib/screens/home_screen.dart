@@ -149,11 +149,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                               },
-                              child: CircleAvatar(
-                                radius: 20,
-                                backgroundColor: Colors.white,
-                                backgroundImage: const NetworkImage('https://i.pravatar.cc/150?img=1'),
-                                child: const Icon(Icons.person, color: AppColors.primaryDark, size: 20),
+                              child: Consumer<ProfileProvider>(
+                                builder: (context, profileProvider, child) {
+                                  final profile = profileProvider.profile;
+                                  return CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Colors.white,
+                                    backgroundImage: (profile.photoPath != null && profile.photoPath!.isNotEmpty)
+                                        ? NetworkImage(profile.photoPath!)
+                                        : null,
+                                    child: (profile.photoPath == null || profile.photoPath!.isEmpty)
+                                        ? const Icon(Icons.person, color: AppColors.primaryDark, size: 20)
+                                        : null,
+                                  );
+                                },
                               ),
                             ),
                             Container(
@@ -171,18 +180,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: AppSpacing.md),
 
                         // Greeting text
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Hello, Kristin W',
-                              style: AppTextStyles.h2.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                            ),
-                            Text(
-                              today,
-                              style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
-                            ),
-                          ],
+                        Consumer<ProfileProvider>(
+                          builder: (context, profileProvider, child) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Hello, ${profileProvider.profile.name}',
+                                  style: AppTextStyles.h2.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                                ),
+                                Text(
+                                  today,
+                                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            );
+                          },
                         ),
 
                         const SizedBox(height: AppSpacing.lg),

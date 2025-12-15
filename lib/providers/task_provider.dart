@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/task.dart';
 import '../services/supabase_service.dart';
-import '../config/supabase_config.dart';
 
 class TaskProvider with ChangeNotifier {
   List<Task> _tasks = [];
@@ -20,6 +19,14 @@ class TaskProvider with ChangeNotifier {
   List<Task> get ongoingTasks => allTasks.where((task) => task.status == TaskStatus.ongoing).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
   List<Task> get completedTasks => allTasks.where((task) => task.status == TaskStatus.completed).toList()..sort((a, b) => (b.completedAt ?? b.createdAt).compareTo(a.completedAt ?? a.createdAt));
   List<Task> get missedTasks => allTasks.where((task) => task.status == TaskStatus.missed).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
+  
+  // Clear all tasks (for logout)
+  void clearTasks() {
+    _tasks = [];
+    notifyListeners();
+    print('✅ Tasks cleared');
+  }
+  
   // Add task
   Future<void> addTask(Task task) async {
     try {
@@ -54,8 +61,13 @@ class TaskProvider with ChangeNotifier {
           break;
       }
 
+      final currentUser = supabase.auth.currentUser;
+      if (currentUser == null) {
+        throw Exception('User not logged in');
+      }
+
       final taskData = {
-        'user_id': SupabaseConfig.adminUserId,
+        'user_id': currentUser.id,
         'title': task.title,
         'description': task.description,
         'start_date': task.startDate?.toIso8601String().split('T')[0], // format date only
@@ -226,7 +238,17 @@ class TaskProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      final response = await supabase.from('notes').select().eq('user_id', SupabaseConfig.adminUserId).order('created_at', ascending: false);
+      final currentUser = supabase.auth.currentUser;
+      if (currentUser == null) {
+        throw Exception('User not logged in');
+      }
+
+      print('🔍 DEBUG: Loading tasks for user: ${currentUser.id}');
+      print('🔍 DEBUG: User email: ${currentUser.email}');
+
+      final response = await supabase.from('notes').select().eq('user_id', currentUser.id).order('created_at', ascending: false);
+      
+      print('🔍 DEBUG: Loaded ${(response as List).length} tasks');
 
       _tasks = (response as List).map((json) {
         // Map string status dari Supabase ke enum
