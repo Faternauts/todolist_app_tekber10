@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_theme.dart';
-import '../screens/onboarding_screen.dart';
+import '../services/supabase_service.dart';
+import '../providers/task_provider.dart';
+import '../providers/profile_provider.dart';
+import '../screens/sign_in_screen.dart';
 
 class LogoutModal extends StatelessWidget {
   const LogoutModal({super.key});
@@ -11,6 +15,34 @@ class LogoutModal extends StatelessWidget {
       context: context,
       builder: (context) => const LogoutModal(),
     );
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    try {
+      // Clear provider data first
+      Provider.of<TaskProvider>(context, listen: false).clearTasks();
+      Provider.of<ProfileProvider>(context, listen: false).clearProfile();
+      
+      // Sign out from Supabase
+      await supabase.auth.signOut();
+      
+      if (context.mounted) {
+        // Navigate to login screen
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const SignInScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Logout failed: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -57,12 +89,7 @@ class LogoutModal extends StatelessWidget {
                   child: SizedBox(
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-                          (route) => false,
-                        );
-                      },
+                      onPressed: () => _handleLogout(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.buttonDanger, // Red color
                         foregroundColor: Colors.white,

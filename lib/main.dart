@@ -3,61 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'config/supabase_config.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'providers/task_provider.dart';
 import 'providers/profile_provider.dart';
 import 'providers/theme_provider.dart';
+import 'screens/sign_in_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/debug_wrapper.dart';
-import 'screens/onboarding_screen.dart';
 
 void main() async {
-  // Add error boundary
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-
-      // Load .env file (with error handling for web)
-      try {
-        await dotenv.load(fileName: ".env");
-        print('✅ .env file loaded successfully');
-      } catch (e) {
-        print('⚠️ Warning: Could not load .env file: $e');
-      }
 
       // Initialize Supabase
       await Supabase.initialize(
         url: SupabaseConfig.supabaseUrl,
         anonKey: SupabaseConfig.supabaseAnonKey,
       );
-
-      // Auto-login
-      /*
-      try {
-        await Supabase.instance.client.auth.signInWithPassword(
-          email: SupabaseConfig.adminEmail,
-          password: SupabaseConfig.adminPassword,
-        );
-        print('✅ Auto-login successful');
-      } catch (e) {
-        print('⚠️ Auto-login failed: $e');
-      }
-      */
+      print('✅ Supabase initialized');
 
       final taskProvider = TaskProvider();
       final profileProvider = ProfileProvider();
       final themeProvider = ThemeProvider();
 
-      // Load data
+      // Load theme first (doesn't require auth)
       try {
-        await Future.wait([
-          taskProvider.loadTasks(),
-          profileProvider.loadProfile(),
-          themeProvider.loadTheme(),
-        ]);
-        print('✅ Data loaded successfully');
+        await themeProvider.loadTheme();
+        print('✅ Theme loaded');
       } catch (e) {
-        print('⚠️ Warning: Could not load data: $e');
+        print('⚠️ Warning: Could not load theme: $e');
       }
 
       print('🚀 Starting app...');
@@ -95,39 +68,76 @@ class MyApp extends StatelessWidget {
           theme: themeProvider.lightTheme,
           darkTheme: themeProvider.darkTheme,
           themeMode: themeProvider.themeMode,
-          home: const OnboardingScreen(),
-          builder: (context, child) {
-            // Error boundary widget
-            ErrorWidget.builder = (FlutterErrorDetails details) {
-              return Material(
-                child: Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                          const SizedBox(height: 16),
-                          const Text('Oops! Something went wrong', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 8),
-                          Text(
-                            details.exception.toString(),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 14, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            };
-            return child ?? const SizedBox();
-          },
+          home: const AuthCheck(),
         );
       },
+    );
+  }
+}
+
+/// Widget to check authentication state
+class AuthCheck extends StatefulWidget {
+  const AuthCheck({super.key});
+
+  @override
+  State<AuthCheck> createState() => _AuthCheckState();
+}
+
+class _AuthCheckState extends State<AuthCheck> {
+  @override
+  void initState() {
+    super.initState();
+    // Use post-frame callback to avoid navigation during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAuth();
+    });
+  }
+
+  Future<void> _checkAuth() async {
+    // Check if user is logged in
+    final session = Supabase.instance.client.auth.currentSession;
+    
+    if (session != null) {
+      // User is logged in, load data
+      print('✅ User is logged in: ${session.user.email}');
+      
+      final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+      final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+      
+      try {
+        await Future.wait([
+          taskProvider.loadTasks(),
+          profileProvider.loadProfile(),
+        ]);
+        print('✅ Data loaded successfully');
+      } catch (e) {
+        print('⚠️ Warning: Could not load data: $e');
+      }
+      
+      // Navigate to home
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+    } else {
+      // User is not logged in, go to login screen
+      print('⚠️ User is not logged in');
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const SignInScreen()),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Show loading screen while checking auth
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_theme.dart';
+import '../services/supabase_service.dart';
+import '../providers/task_provider.dart';
+import '../providers/profile_provider.dart';
 import 'home_screen.dart';
+import 'signup_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -13,6 +18,8 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -153,7 +160,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         // Password Input
                         TextField(
                           controller: _passwordController,
-                          obscureText: true,
+                          obscureText: !_isPasswordVisible,
                           decoration: InputDecoration(
                             hintText: 'Enter password',
                             hintStyle: const TextStyle(
@@ -170,6 +177,20 @@ class _SignInScreenState extends State<SignInScreen> {
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 16,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
+                                color: const Color(0xFF9E9E9E),
+                                size: 20,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
                             ),
                           ),
                         ),
@@ -203,7 +224,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           width: double.infinity,
                           height: 48,
                           child: ElevatedButton(
-                            onPressed: _handleSignIn,
+                            onPressed: _isLoading ? null : _handleSignIn,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF9759C4),
                               foregroundColor: Colors.white,
@@ -211,16 +232,26 @@ class _SignInScreenState extends State<SignInScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),
                               ),
+                              disabledBackgroundColor: const Color(0xFF9759C4).withOpacity(0.6),
                             ),
-                            child: const Text(
-                              'Sign in',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: -0.32,
-                                fontFamily: AppTextStyles.fontFamily,
-                              ),
-                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : const Text(
+                                    'Sign in',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: -0.32,
+                                      fontFamily: AppTextStyles.fontFamily,
+                                    ),
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -318,7 +349,10 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  // TODO: Navigate to sign up screen
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                                  );
                                 },
                                 child: const Text(
                                   'Sign up',
@@ -346,35 +380,96 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void _handleSignIn() {
+  Future<void> _handleSignIn() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter both email and password'),
+        SnackBar(
+          content: const Text('Mohon isi email dan password'),
           backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(16),
         ),
       );
       return;
     }
 
-    // Mock authentication logic
-    if (email == 'admin@test.com' && password == 'admin123') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
       );
-    } else {
+
+      if (!mounted) return;
+
+      print('✅ Sign in successful, loading user data...');
+
+      // Load user data before navigating
+      final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+      final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+      
+      try {
+        await Future.wait([
+          taskProvider.loadTasks(),
+          profileProvider.loadProfile(),
+        ]);
+        print('✅ User data loaded after sign in');
+      } catch (e) {
+        print('⚠️ Warning: Could not load data after sign in: $e');
+      }
+
+      if (!mounted) return;
+
+      // Navigate to home screen
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      String errorMessage = 'Login gagal. Silakan coba lagi.';
+      final errorString = e.toString().toLowerCase();
+
+      if (errorString.contains('invalid login credentials') || 
+          errorString.contains('invalid_credentials')) {
+        errorMessage = 'Email atau password salah';
+      } else if (errorString.contains('email not confirmed')) {
+        errorMessage = 'Email belum diverifikasi. Cek inbox Anda';
+      } else if (errorString.contains('user not found')) {
+        errorMessage = 'Akun tidak ditemukan';
+      } else if (errorString.contains('network') || errorString.contains('connection')) {
+        errorMessage = 'Koneksi internet bermasalah';
+      } else if (errorString.contains('too many requests')) {
+        errorMessage = 'Terlalu banyak percobaan. Coba lagi nanti';
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid email or password'),
+        SnackBar(
+          content: Text(errorMessage),
           backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(16),
         ),
       );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }
