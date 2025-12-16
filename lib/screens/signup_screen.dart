@@ -172,7 +172,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (widget.fromOnboarding) {
       // If from onboarding, replace with SignInScreen
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => SignInScreen()),
+        MaterialPageRoute(builder: (_) => const SignInScreen()),
       );
     } else {
       Navigator.of(context).pop();

@@ -3,21 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'config/supabase_config.dart';
 import 'providers/task_provider.dart';
 import 'providers/profile_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/sign_in_screen.dart';
 import 'screens/home_screen.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/onboarding_screen.dart';
 
 void main() async {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      await dotenv.load(fileName: ".env");
 
-           // Initialize Supabase
+      // Initialize Supabase
       await Supabase.initialize(
         url: SupabaseConfig.supabaseUrl,
         anonKey: SupabaseConfig.supabaseAnonKey,

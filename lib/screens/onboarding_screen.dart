@@ -9,18 +9,16 @@ import '../constants/app_theme.dart';
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
-  Future<void> _completeOnboarding(BuildContext context, Widget targetScreen) async {
+  Future<void> _navigate(BuildContext context, Widget targetScreen, {bool replace = false}) async {
     // Just navigate without saving preference
     if (context.mounted) {
-      if (targetScreen is SignUpScreen || targetScreen is SignInScreen) {
-        // Use push for auth screens so user can come back if needed
-        Navigator.push(
+      if (replace) {
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => targetScreen),
         );
       } else {
-        // Use pushReplacement for others
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => targetScreen),
         );
@@ -139,7 +137,7 @@ class OnboardingScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () => _completeOnboarding(context, const SignUpScreen(fromOnboarding: true)),
+                      onPressed: () => _navigate(context, const SignUpScreen(fromOnboarding: true)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accentPurple, // --Primary-purple-600
                         foregroundColor: Colors.white,
@@ -165,7 +163,7 @@ class OnboardingScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 48,
                     child: OutlinedButton(
-                      onPressed: () => _completeOnboarding(context, const SignInScreen()),
+                      onPressed: () => _navigate(context, const SignInScreen()),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.black,
                         side: const BorderSide(color: AppColors.borderLighter), // --Monochrome-100
