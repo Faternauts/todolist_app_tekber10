@@ -347,6 +347,9 @@ class TaskProvider with ChangeNotifier {
     int previousWeekTotal = 0;
 
     for (var task in allTasks) {
+// Only count completed tasks
+      if (task.status != TaskStatus.completed) continue;
+
       final createdAt = task.createdAt;
       
       // Check if task is in current week

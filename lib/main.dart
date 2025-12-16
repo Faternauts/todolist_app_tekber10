@@ -2,17 +2,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'config/supabase_config.dart';
 import 'providers/task_provider.dart';
 import 'providers/profile_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/sign_in_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/onboarding_screen.dart';
 
 void main() async {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      await dotenv.load(fileName: ".env");
 
       // Initialize Supabase
       await Supabase.initialize(
@@ -121,11 +126,13 @@ class _AuthCheckState extends State<AuthCheck> {
         );
       }
     } else {
-      // User is not logged in, go to login screen
+      // User is not logged in
       print('⚠️ User is not logged in');
+      
+      // Always go to onboarding if not logged in
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const SignInScreen()),
+          MaterialPageRoute(builder: (_) => const OnboardingScreen()),
         );
       }
     }
