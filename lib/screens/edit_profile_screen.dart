@@ -289,7 +289,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               hintText: 'Enter username',
                               hintStyle: const TextStyle(
                                 fontSize: 14,
-                                color: Color(0xFF9E9E9E),
+                                color: AppColors.priorityLow,
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                               filled: true,
