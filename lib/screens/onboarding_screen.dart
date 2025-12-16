@@ -1,11 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
 import 'sign_in_screen.dart';
+import 'signup_screen.dart';
 import '../constants/app_theme.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
+
+  Future<void> _completeOnboarding(BuildContext context, Widget targetScreen) async {
+    // Just navigate without saving preference
+    if (context.mounted) {
+      if (targetScreen is SignUpScreen || targetScreen is SignInScreen) {
+        // Use push for auth screens so user can come back if needed
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => targetScreen),
+        );
+      } else {
+        // Use pushReplacement for others
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => targetScreen),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +44,6 @@ class OnboardingScreen extends StatelessWidget {
             ),
           ),
 
-          // Floating Elements Area
           // Floating Elements Area
           Positioned.fill(
             child: SafeArea(
@@ -119,12 +139,7 @@ class OnboardingScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const HomeScreen()),
-                        );
-                      },
+                      onPressed: () => _completeOnboarding(context, const SignUpScreen(fromOnboarding: true)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accentPurple, // --Primary-purple-600
                         foregroundColor: Colors.white,
@@ -150,12 +165,7 @@ class OnboardingScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 48,
                     child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SignInScreen()),
-                        );
-                      },
+                      onPressed: () => _completeOnboarding(context, const SignInScreen()),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.black,
                         side: const BorderSide(color: AppColors.borderLighter), // --Monochrome-100

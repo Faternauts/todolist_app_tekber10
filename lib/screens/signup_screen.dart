@@ -6,9 +6,15 @@ import '../services/supabase_service.dart';
 import '../providers/task_provider.dart';
 import '../providers/profile_provider.dart';
 import 'home_screen.dart';
+import 'sign_in_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  final bool fromOnboarding;
+
+  const SignUpScreen({
+    super.key,
+    this.fromOnboarding = false,
+  });
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -98,7 +104,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             _showSnackBar('Silakan cek email untuk verifikasi akun', isError: false);
             
             // Navigate back to sign in
-            Navigator.of(context).pop();
+            if (widget.fromOnboarding) {
+              // If from onboarding, replace with SignInScreen
+               Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => SignInScreen()),
+              );
+            } else {
+              Navigator.of(context).pop();
+            }
           }
           return;
         }
@@ -537,7 +550,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () => Navigator.pop(context),
+                                onTap: () {
+                                  if (widget.fromOnboarding) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => SignInScreen()),
+                                    );
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                },
                                 child: const Text(
                                   'Sign in',
                                   style: TextStyle(
