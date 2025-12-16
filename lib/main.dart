@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'config/supabase_config.dart';
 import 'providers/task_provider.dart';
 import 'providers/profile_provider.dart';
@@ -17,15 +17,7 @@ void main() async {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
-      // Load env vars
-      await dotenv.load(fileName: ".env");
-      final apiKey = dotenv.env['OPENAI_API_KEY'];
-      print('✅ Dotenv loaded. Key present: ${apiKey != null && apiKey.isNotEmpty}');
-      if (apiKey != null && apiKey.length > 10) {
-         print('Key starts with: ${apiKey.substring(0, 7)}...'); 
-      }
-
-      // Initialize Supabase
+           // Initialize Supabase
       await Supabase.initialize(
         url: SupabaseConfig.supabaseUrl,
         anonKey: SupabaseConfig.supabaseAnonKey,

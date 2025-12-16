@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'home_screen.dart';
 import 'sign_in_screen.dart';
 import 'signup_screen.dart';

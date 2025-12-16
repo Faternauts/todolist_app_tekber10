@@ -104,14 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             _showSnackBar('Silakan cek email untuk verifikasi akun', isError: false);
             
             // Navigate back to sign in
-            if (widget.fromOnboarding) {
-              // If from onboarding, replace with SignInScreen
-               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => SignInScreen()),
-              );
-            } else {
-              Navigator.of(context).pop();
-            }
+            _navigateToSignIn();
           }
           return;
         }
@@ -172,6 +165,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  void _navigateToSignIn() {
+    if (widget.fromOnboarding) {
+      // If from onboarding, replace with SignInScreen
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => SignInScreen()),
+      );
+    } else {
+      Navigator.of(context).pop();
     }
   }
 
@@ -550,16 +554,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () {
-                                  if (widget.fromOnboarding) {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (_) => SignInScreen()),
-                                    );
-                                  } else {
-                                    Navigator.pop(context);
-                                  }
-                                },
+                                onTap: _navigateToSignIn,
                                 child: const Text(
                                   'Sign in',
                                   style: TextStyle(
