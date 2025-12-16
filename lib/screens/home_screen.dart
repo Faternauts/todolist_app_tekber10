@@ -85,14 +85,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (task != null && mounted) {
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-      await taskProvider.addTask(task);
+      final createdTask = await taskProvider.addTask(task);
 
       // Show success modal
       final shouldCheckTask = await SuccessModal.show(context);
 
       if (shouldCheckTask == true && mounted) {
         // Navigate to focus mode
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => FocusModeScreen(task: task)));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => FocusModeScreen(task: createdTask)));
       }
     }
   }
