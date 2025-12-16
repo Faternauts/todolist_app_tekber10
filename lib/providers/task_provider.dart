@@ -347,7 +347,7 @@ class TaskProvider with ChangeNotifier {
     int previousWeekTotal = 0;
 
     for (var task in allTasks) {
-      // Hanya hitung task yang sudah completed
+// Only count completed tasks
       if (task.status != TaskStatus.completed) continue;
 
       final createdAt = task.createdAt;
