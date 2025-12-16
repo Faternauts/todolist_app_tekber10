@@ -342,11 +342,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               fillColor: Colors.white,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+                                borderSide: const BorderSide(color: AppColors.borderLighter),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+                                borderSide: const BorderSide(color: AppColors.borderLighter),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
