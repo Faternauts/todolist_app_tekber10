@@ -174,7 +174,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: CircleAvatar(
             backgroundColor: Colors.white,
             child: IconButton(
-              icon: const Icon(Icons.chevron_left, color: Colors.black, size: 24),
+              icon: const Icon(Icons.chevron_left, color: AppColors.textPrimary, size: 24),
               onPressed: () => Navigator.pop(context),
             ),
           ),
@@ -183,12 +183,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         title: const Text(
           'Edit profile',
           style: TextStyle(
-            color: Colors.black, // Title color in design seems dark/black? Or maybe white if on purple?
-            // Checking loaded image: It says "Edit profile" in dark text on purple bg? No, usually transparency.
-            // Let's look at the image again: "Edit profile" text is on the purple background.
-            // Actually in the uploaded image, the status bar is there, the header "Edit profile" is on the purple background.
-            // Wait, looking at the image provided in step 76:
-            // "Edit profile" is dark text? It looks like dark text on light purple.
+            color: AppColors.textPrimary,
             fontSize: 16,
             fontWeight: FontWeight.w600,
             fontFamily: AppTextStyles.fontFamily,
@@ -298,15 +293,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                               filled: true,
-                              fillColor: Colors.white, // In design it looks white with border? No, usually light grey or white with border.
-                              // Let's match the design: Simple rounded border.
+                              fillColor: Colors.white, 
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+                                borderSide: const BorderSide(color: AppColors.borderLighter),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+                                borderSide: const BorderSide(color: AppColors.borderLighter),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -341,7 +335,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               hintText: 'Enter age',
                               hintStyle: const TextStyle(
                                 fontSize: 14,
-                                color: Color(0xFF9E9E9E),
+                                color: AppColors.priorityLow,
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                               filled: true,
@@ -388,7 +382,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: ElevatedButton(
             onPressed: _isLoading ? null : _saveProfile,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF9759C4),
+              backgroundColor: AppColors.accentPurple,
               foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
