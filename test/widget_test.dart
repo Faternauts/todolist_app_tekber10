@@ -7,24 +7,50 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
-import 'package:todolist_app_tekber10/main.dart';
+import 'package:todolist_app_tekber10/providers/task_provider.dart';
+import 'package:todolist_app_tekber10/providers/profile_provider.dart';
+import 'package:todolist_app_tekber10/providers/theme_provider.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Providers can be used in widget tree', (WidgetTester tester) async {
+    // Set up providers for testing
+    final taskProvider = TaskProvider();
+    final profileProvider = ProfileProvider();
+    final themeProvider = ThemeProvider();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Build a simple widget that uses the providers
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: taskProvider),
+          ChangeNotifierProvider.value(value: profileProvider),
+          ChangeNotifierProvider.value(value: themeProvider),
+        ],
+        child: MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                // Verify providers are accessible
+                final theme = Provider.of<ThemeProvider>(context);
+                final task = Provider.of<TaskProvider>(context);
+                final profile = Provider.of<ProfileProvider>(context);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+                return Center(
+                  child: Text(
+                    'Theme: ${theme.themeMode}, Tasks: ${task.allTasks.length}, Profile: ${profile.profile.name}',
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the widget builds successfully and providers are accessible
+    expect(find.byType(Text), findsOneWidget);
+    expect(find.textContaining('Theme:'), findsOneWidget);
   });
 }
