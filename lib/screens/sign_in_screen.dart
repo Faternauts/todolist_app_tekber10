@@ -324,11 +324,7 @@ class _SignInScreenState extends State<SignInScreen> {
           profileProvider.loadProfile(),
         ]);
       } catch (e) {
-<<<<<<< HEAD
         print('Error loading data after sign in: $e');
-=======
-        print('Warning: Could not load data after sign in: $e');
->>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
       }
 
       if (!mounted) return;
