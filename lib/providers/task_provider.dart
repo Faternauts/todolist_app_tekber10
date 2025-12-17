@@ -16,6 +16,7 @@ class TaskProvider with ChangeNotifier {
     return _tasks;
   }
 
+<<<<<<< HEAD
   List<Task> get ongoingTasks =>
       allTasks.where((task) => task.status == TaskStatus.ongoing).toList()
         ..sort((a, b) => a.deadline.compareTo(b.deadline));
@@ -27,6 +28,11 @@ class TaskProvider with ChangeNotifier {
   List<Task> get missedTasks =>
       allTasks.where((task) => task.status == TaskStatus.missed).toList()
         ..sort((a, b) => a.deadline.compareTo(b.deadline));
+=======
+  List<Task> get ongoingTasks => allTasks.where((task) => task.status == TaskStatus.ongoing).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
+  List<Task> get completedTasks => allTasks.where((task) => task.status == TaskStatus.completed).toList()..sort((a, b) => (b.completedAt ?? b.createdAt).compareTo(a.completedAt ?? a.createdAt));
+  List<Task> get missedTasks => allTasks.where((task) => task.status == TaskStatus.missed).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
+>>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
 
   // Clear all tasks (for logout)
   void clearTasks() {
@@ -34,6 +40,15 @@ class TaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
+<<<<<<< HEAD
+=======
+  @visibleForTesting
+  void setTasksForTesting(List<Task> tasks) {
+    _tasks = tasks;
+    notifyListeners();
+  }
+
+>>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
   // Add task
   Future<Task> addTask(Task task) async {
     try {
@@ -255,11 +270,15 @@ class TaskProvider with ChangeNotifier {
         throw Exception('User not logged in');
       }
 
+<<<<<<< HEAD
       final response = await supabase
           .from('notes')
           .select()
           .eq('user_id', currentUser.id)
           .order('created_at', ascending: false);
+=======
+      final response = await supabase.from('notes').select().eq('user_id', currentUser.id).order('created_at', ascending: false);
+>>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
 
       _tasks = (response as List).map((json) {
         // Map string status dari Supabase ke enum

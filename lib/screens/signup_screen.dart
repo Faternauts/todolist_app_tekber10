@@ -68,9 +68,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
 
       if (response.user != null && mounted) {
-        print('✅ User signed up: ${response.user!.email}');
-        print('✅ Session: ${response.session != null ? "Active" : "Pending verification"}');
-        
         // Check if email confirmation is required
         if (response.session == null) {
           // Email confirmation required - show message

@@ -110,7 +110,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               final oldFileName = _currentPhotoUrl!.split('/').last;
               await supabase.storage.from('avatars').remove([oldFileName]);
             } catch (e) {
-              print('⚠️ Could not delete old avatar: $e');
+              print(' Could not delete old avatar: $e');
             }
           }
 
@@ -118,7 +118,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           await supabase.storage.from('avatars').upload(
                 filePath,
                 _selectedImage!,
-                fileOptions: FileOptions(
+                fileOptions: const FileOptions(
                   cacheControl: '3600',
                   upsert: true,
                 ),
@@ -126,7 +126,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
           // Get public URL
           photoUrl = supabase.storage.from('avatars').getPublicUrl(filePath);
-          print('✅ Avatar uploaded: $photoUrl');
         }
       }
 

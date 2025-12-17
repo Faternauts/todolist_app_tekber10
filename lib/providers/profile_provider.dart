@@ -50,7 +50,10 @@ class ProfileProvider with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
+<<<<<<< HEAD
       print('Error loading profile: $e');
+=======
+>>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
       // Tidak throw error supaya app tetap jalan
     }
   }
