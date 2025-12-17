@@ -34,7 +34,9 @@ class ProfileProvider with ChangeNotifier {
 
       if (response != null) {
         _profile = UserProfile(
-          name: response['username'] ?? currentUser.email?.split('@')[0] ?? 'User',
+          name: response['username'] ??
+              currentUser.email?.split('@')[0] ??
+              'User',
           photoPath: response['photo_url'],
           age: response['age'],
         );
@@ -60,7 +62,7 @@ class ProfileProvider with ChangeNotifier {
 
     try {
       final username = currentUser.email?.split('@')[0] ?? 'User';
-      
+
       await supabase.from('profiles').insert({
         'id': currentUser.id,
         'username': username,

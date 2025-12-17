@@ -52,7 +52,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (_searchQuery.isNotEmpty) {
-      tasks = tasks.where((task) => task.title.toLowerCase().contains(_searchQuery.toLowerCase()) || task.description.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+      tasks = tasks
+          .where((task) =>
+              task.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+              task.description
+                  .toLowerCase()
+                  .contains(_searchQuery.toLowerCase()))
+          .toList();
     }
 
     return tasks;
@@ -92,13 +98,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (shouldCheckTask == true && mounted) {
         // Navigate to focus mode
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => FocusModeScreen(task: createdTask)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => FocusModeScreen(task: createdTask)));
       }
     }
   }
 
   void _openTaskDetail(Task task) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => FocusModeScreen(task: task)));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => FocusModeScreen(task: task)));
   }
 
   @override
@@ -123,14 +131,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   Positioned(
                     left: -20,
                     bottom: -20,
-                    child: Opacity(opacity: 0.8, child: SvgPicture.asset('images/left-bg.svg', width: 130, height: 130, fit: BoxFit.contain)),
+                    child: Opacity(
+                        opacity: 0.8,
+                        child: SvgPicture.asset('images/left-bg.svg',
+                            width: 130, height: 130, fit: BoxFit.contain)),
                   ),
 
                   // Top right background SVG
                   Positioned(
                     right: -40,
                     top: -40,
-                    child: Opacity(opacity: 0.8, child: SvgPicture.asset('images/top-bg.svg', width: 160, height: 160, fit: BoxFit.contain)),
+                    child: Opacity(
+                        opacity: 0.8,
+                        child: SvgPicture.asset('images/top-bg.svg',
+                            width: 160, height: 160, fit: BoxFit.contain)),
                   ),
 
                   // Main content
@@ -155,12 +169,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                   final profile = profileProvider.profile;
                                   return CircleAvatar(
                                     radius: 20,
-                                    backgroundColor: Theme.of(context).colorScheme.surface,
-                                    backgroundImage: (profile.photoPath != null && profile.photoPath!.isNotEmpty)
-                                        ? NetworkImage(profile.photoPath!)
-                                        : null,
-                                    child: (profile.photoPath == null || profile.photoPath!.isEmpty)
-                                        ? Icon(Icons.person, color: Theme.of(context).colorScheme.primary, size: 20)
+                                    backgroundColor:
+                                        Theme.of(context).colorScheme.surface,
+                                    backgroundImage:
+                                        (profile.photoPath != null &&
+                                                profile.photoPath!.isNotEmpty)
+                                            ? NetworkImage(profile.photoPath!)
+                                            : null,
+                                    child: (profile.photoPath == null ||
+                                            profile.photoPath!.isEmpty)
+                                        ? Icon(Icons.person,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            size: 20)
                                         : null,
                                   );
                                 },
@@ -179,11 +201,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Text(
                                   'Hello, ${profileProvider.profile.name}',
-                                  style: AppTextStyles.h2.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimaryContainer),
+                                  style: AppTextStyles.h2.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer),
                                 ),
                                 Text(
                                   today,
-                                  style: AppTextStyles.bodySmall.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer, fontWeight: FontWeight.w500),
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer,
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ],
                             );
@@ -194,7 +224,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         // Search bar
                         Container(
-                          decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(AppRadius.full)),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.full)),
                           child: TextField(
                             controller: _searchController,
                             onChanged: (value) {
@@ -204,19 +237,33 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Search tasks',
-                              hintStyle: AppTextStyles.bodyMedium.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                              hintStyle: AppTextStyles.bodyMedium.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(0.5)),
                               prefixIcon: Padding(
                                 padding: const EdgeInsets.all(14.0),
-                                child: SvgPicture.asset('images/icons/lens.svg', width: 20, height: 20, colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface.withOpacity(0.5), BlendMode.srcIn)),
+                                child: SvgPicture.asset('images/icons/lens.svg',
+                                    width: 20,
+                                    height: 20,
+                                    colorFilter: ColorFilter.mode(
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.5),
+                                        BlendMode.srcIn)),
                               ),
                               border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.md),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    ),
+                  ),
                 ],
               ),
             ),
@@ -225,12 +272,19 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Theme.of(context).colorScheme.primaryContainer, Theme.of(context).colorScheme.primaryContainer.withOpacity(0.7)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+                  gradient: LinearGradient(colors: [
+                    Theme.of(context).colorScheme.primaryContainer,
+                    Theme.of(context)
+                        .colorScheme
+                        .primaryContainer
+                        .withOpacity(0.7)
+                  ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xxl + 10)),
+                    borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(AppRadius.xxl + 10)),
                   ),
                   child: Column(
                     children: [
@@ -238,11 +292,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       // Section header
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.lg),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('All Activity', style: AppTextStyles.h3.copyWith(color: Theme.of(context).colorScheme.onBackground)),
+                            Text('All Activity',
+                                style: AppTextStyles.h3.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground)),
                           ],
                         ),
                       ),
@@ -254,7 +313,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 28,
                         child: ListView(
                           scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm),
                           children: [
                             _buildCategoryTab('All'),
                             const SizedBox(width: AppSpacing.sm),
@@ -280,18 +340,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    SvgPicture.asset('images/not-found.svg', width: 64, height: 64, colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface.withOpacity(0.3), BlendMode.srcIn)),
+                                    SvgPicture.asset('images/not-found.svg',
+                                        width: 64,
+                                        height: 64,
+                                        colorFilter: ColorFilter.mode(
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.3),
+                                            BlendMode.srcIn)),
                                     const SizedBox(height: AppSpacing.md),
-                                    Text('No tasks found', style: AppTextStyles.bodyLarge.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))),
+                                    Text('No tasks found',
+                                        style: AppTextStyles.bodyLarge.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.7))),
                                     const SizedBox(height: AppSpacing.sm),
-                                    Text('Tap the + button to add a new task', style: AppTextStyles.bodySmall.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))),
+                                    Text('Tap the + button to add a new task',
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.5))),
                                   ],
                                 ),
                               );
                             }
 
                             return ListView.builder(
-                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.lg,
+                                  vertical: AppSpacing.sm),
                               itemCount: tasks.length,
                               itemBuilder: (context, index) {
                                 final task = tasks[index];
@@ -309,7 +389,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-
       bottomNavigationBar: _buildBottomNav(),
     );
   }
@@ -325,10 +404,20 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
-        decoration: BoxDecoration(color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(AppRadius.full)),
+        decoration: BoxDecoration(
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(AppRadius.full)),
         child: Text(
           label,
-          style: TextStyle(fontSize: 12, color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface.withOpacity(0.7), fontWeight: FontWeight.w500, fontFamily: 'SFProDisplay'),
+          style: TextStyle(
+              fontSize: 12,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              fontWeight: FontWeight.w500,
+              fontFamily: 'SFProDisplay'),
         ),
       ),
     );
@@ -339,11 +428,13 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () => _openTaskDetail(task),
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.md),
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md + 2),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg, vertical: AppSpacing.md + 2),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+          border: Border.all(
+              color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
           boxShadow: const [AppShadows.small],
         ),
         child: Row(
@@ -351,7 +442,11 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: Text(
                 task.title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Theme.of(context).colorScheme.onSurface, fontFamily: 'SFProDisplay'),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontFamily: 'SFProDisplay'),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -359,10 +454,17 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: AppSpacing.md),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(color: _getPriorityBgColor(task.priority), borderRadius: BorderRadius.circular(20)),
+              decoration: BoxDecoration(
+                  color: _getPriorityBgColor(task.priority),
+                  borderRadius: BorderRadius.circular(20)),
               child: Text(
-                task.priority.name[0].toUpperCase() + task.priority.name.substring(1),
-                style: TextStyle(fontSize: 12, color: _getPriorityColor(task.priority), fontWeight: FontWeight.w600, fontFamily: 'SFProDisplay'),
+                task.priority.name[0].toUpperCase() +
+                    task.priority.name.substring(1),
+                style: TextStyle(
+                    fontSize: 12,
+                    color: _getPriorityColor(task.priority),
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'SFProDisplay'),
               ),
             ),
           ],
@@ -377,22 +479,32 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        boxShadow: isDark ? [] : [BoxShadow(color: AppColors.shadowColor, blurRadius: 8, offset: Offset(0, -2))],
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                    color: AppColors.shadowColor,
+                    blurRadius: 8,
+                    offset: Offset(0, -2))
+              ],
       ),
       child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem('images/icons/home.svg', 'images/icons/home-active.svg', 'Home', 0),
+            _buildNavItem('images/icons/home.svg',
+                'images/icons/home-active.svg', 'Home', 0),
             _buildCenterAddButton(),
-            _buildNavItem('images/icons/settings.svg', 'images/icons/setting-activate.svg', 'Settings', 4),
+            _buildNavItem('images/icons/settings.svg',
+                'images/icons/setting-activate.svg', 'Settings', 4),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(String svgIcon, String svgIconActive, String label, int index) {
+  Widget _buildNavItem(
+      String svgIcon, String svgIconActive, String label, int index) {
     final isActive = _selectedBottomNav == index;
 
     return GestureDetector(
@@ -403,17 +515,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // Handle navigation
         if (index == 4) {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ThemeSettingsScreen()));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const ThemeSettingsScreen()));
         }
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(isActive ? svgIconActive : svgIcon, width: 24, height: 24, colorFilter: ColorFilter.mode(isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.4), BlendMode.srcIn)),
+          SvgPicture.asset(isActive ? svgIconActive : svgIcon,
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                  isActive
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.4),
+                  BlendMode.srcIn)),
           const SizedBox(height: 4),
           Text(
             label,
-            style: AppTextStyles.caption.copyWith(color: isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontWeight: isActive ? FontWeight.bold : FontWeight.w500),
+            style: AppTextStyles.caption.copyWith(
+                color: isActive
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                fontWeight: isActive ? FontWeight.bold : FontWeight.w500),
           ),
         ],
       ),
@@ -431,7 +558,8 @@ class _HomeScreenState extends State<HomeScreen> {
           shape: BoxShape.circle,
           boxShadow: [AppShadows.medium],
         ),
-        child: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary, size: 32),
+        child: Icon(Icons.add,
+            color: Theme.of(context).colorScheme.onPrimary, size: 32),
       ),
     );
   }

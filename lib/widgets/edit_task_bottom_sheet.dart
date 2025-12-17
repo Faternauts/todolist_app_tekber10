@@ -57,7 +57,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
+    ).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
     _animationController.forward();
   }
 
@@ -181,7 +182,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
         height: MediaQuery.of(context).size.height * 0.85,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xxl)),
+          borderRadius:
+              BorderRadius.vertical(top: Radius.circular(AppRadius.xxl)),
         ),
         child: Column(
           children: [
@@ -192,8 +194,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Edit Task',
-                      style: AppTextStyles.h4
-                          .copyWith(color: Theme.of(context).colorScheme.onSurface)),
+                      style: AppTextStyles.h4.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface)),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Container(
@@ -201,10 +203,18 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                       height: 32,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                        border: Border.all(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .outline
+                                .withOpacity(0.2)),
                       ),
-                      child: Icon(Icons.close, size: 18,
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                      child: Icon(Icons.close,
+                          size: 18,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.6)),
                     ),
                   ),
                 ],
@@ -216,8 +226,8 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
               child: Form(
                 key: _formKey,
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                   children: [
                     // Task Title
                     Text(
@@ -231,24 +241,37 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                       controller: _titleController,
                       decoration: InputDecoration(
                         hintText: 'Enter title',
-                        hintStyle: AppTextStyles.bodyMedium
-                            .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
+                        hintStyle: AppTextStyles.bodyMedium.copyWith(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.4)),
                         filled: true,
-                        fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : const Color(0xFFF9FAFB),
+                        fillColor:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[800]
+                                : const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
                           borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline
+                                  .withOpacity(0.2)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
                           borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline
+                                  .withOpacity(0.2)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
                           borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.primary, width: 2),
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2),
                         ),
                         contentPadding: const EdgeInsets.all(AppSpacing.md),
                       ),
@@ -275,24 +298,37 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                       maxLines: 4,
                       decoration: InputDecoration(
                         hintText: 'Enter description',
-                        hintStyle: AppTextStyles.bodyMedium
-                            .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
+                        hintStyle: AppTextStyles.bodyMedium.copyWith(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.4)),
                         filled: true,
-                        fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : const Color(0xFFF9FAFB),
+                        fillColor:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[800]
+                                : const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
                           borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline
+                                  .withOpacity(0.2)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
                           borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline
+                                  .withOpacity(0.2)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
                           borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.primary, width: 2),
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2),
                         ),
                         contentPadding: const EdgeInsets.all(AppSpacing.md),
                       ),
@@ -317,7 +353,9 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                 'Start date',
                                 style: AppTextStyles.bodySmall.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.onSurface),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface),
                               ),
                               const SizedBox(height: AppSpacing.sm),
                               InkWell(
@@ -325,11 +363,17 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                 child: Container(
                                   padding: const EdgeInsets.all(AppSpacing.md),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : const Color(0xFFF9FAFB),
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.grey[800]
+                                        : const Color(0xFFF9FAFB),
                                     borderRadius:
                                         BorderRadius.circular(AppRadius.lg),
                                     border: Border.all(
-                                        color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline
+                                            .withOpacity(0.2)),
                                   ),
                                   child: Row(
                                     children: [
@@ -339,17 +383,21 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                               .format(_startDate),
                                           style: AppTextStyles.bodyMedium
                                               .copyWith(
-                                                  color: Theme.of(context).colorScheme.onSurface),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
                                         ),
                                       ),
                                       SvgPicture.asset(
                                           'images/icons/calendar.svg',
                                           width: 18,
                                           height: 18,
-                                          colorFilter:
-                                              ColorFilter.mode(
-                                                  Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                                                  BlendMode.srcIn)),
+                                          colorFilter: ColorFilter.mode(
+                                              Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withOpacity(0.4),
+                                              BlendMode.srcIn)),
                                     ],
                                   ),
                                 ),
@@ -366,7 +414,9 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                 'Due date',
                                 style: AppTextStyles.bodySmall.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.onSurface),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface),
                               ),
                               const SizedBox(height: AppSpacing.sm),
                               InkWell(
@@ -374,11 +424,17 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                 child: Container(
                                   padding: const EdgeInsets.all(AppSpacing.md),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : const Color(0xFFF9FAFB),
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.grey[800]
+                                        : const Color(0xFFF9FAFB),
                                     borderRadius:
                                         BorderRadius.circular(AppRadius.lg),
                                     border: Border.all(
-                                        color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline
+                                            .withOpacity(0.2)),
                                   ),
                                   child: Row(
                                     children: [
@@ -388,17 +444,21 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                               .format(_dueDate),
                                           style: AppTextStyles.bodyMedium
                                               .copyWith(
-                                                  color: Theme.of(context).colorScheme.onSurface),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
                                         ),
                                       ),
                                       SvgPicture.asset(
                                           'images/icons/calendar.svg',
                                           width: 18,
                                           height: 18,
-                                          colorFilter:
-                                              ColorFilter.mode(
-                                                  Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                                                  BlendMode.srcIn)),
+                                          colorFilter: ColorFilter.mode(
+                                              Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withOpacity(0.4),
+                                              BlendMode.srcIn)),
                                     ],
                                   ),
                                 ),
@@ -439,14 +499,21 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                     vertical: AppSpacing.sm),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? Theme.of(context).colorScheme.primaryContainer
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
                                       : Theme.of(context).cardColor,
                                   borderRadius:
                                       BorderRadius.circular(AppRadius.full),
                                   border: Border.all(
                                       color: isSelected
-                                          ? Theme.of(context).colorScheme.primary
-                                          : Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .outline
+                                              .withOpacity(0.2),
                                       width: isSelected ? 2 : 1),
                                 ),
                                 child: Text(
@@ -454,8 +521,13 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                   style: AppTextStyles.bodyMedium.copyWith(
                                       fontWeight: FontWeight.w500,
                                       color: isSelected
-                                          ? Theme.of(context).colorScheme.primary
-                                          : Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withOpacity(0.6)),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -476,7 +548,11 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
               padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
                 border: Border(
-                    top: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2))),
+                    top: BorderSide(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .outline
+                            .withOpacity(0.2))),
               ),
               child: SafeArea(
                 child: SizedBox(
@@ -486,11 +562,10 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                     onPressed: _isSaving ? null : _handleSubmit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.md),
+                      padding:
+                          const EdgeInsets.symmetric(vertical: AppSpacing.md),
                       shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.full)),
+                          borderRadius: BorderRadius.circular(AppRadius.full)),
                       elevation: 4,
                     ),
                     child: _isSaving
@@ -498,10 +573,12 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(
-                                color: Theme.of(context).colorScheme.onPrimary, strokeWidth: 2))
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                strokeWidth: 2))
                         : Text('Save',
-                            style: AppTextStyles.button
-                                .copyWith(color: Theme.of(context).colorScheme.onPrimary)),
+                            style: AppTextStyles.button.copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onPrimary)),
                   ),
                 ),
               ),

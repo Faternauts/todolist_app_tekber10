@@ -26,7 +26,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final profile = Provider.of<ProfileProvider>(context, listen: false).profile;
+    final profile =
+        Provider.of<ProfileProvider>(context, listen: false).profile;
     _usernameController.text = profile.name;
     _ageController.text = profile.age?.toString() ?? '';
     _currentPhotoUrl = profile.photoPath;
@@ -99,7 +100,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (_selectedImage != null) {
         final currentUser = supabase.auth.currentUser;
         if (currentUser != null) {
-          final fileName = '${currentUser.id}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+          final fileName =
+              '${currentUser.id}_${DateTime.now().millisecondsSinceEpoch}.jpg';
           final filePath = '$fileName';
 
           // Delete old avatar if exists
@@ -130,7 +132,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       // Update profile in provider
       if (mounted) {
-        await Provider.of<ProfileProvider>(context, listen: false).updateProfile(
+        await Provider.of<ProfileProvider>(context, listen: false)
+            .updateProfile(
           username,
           age.isNotEmpty ? int.parse(age) : null,
           photoUrl,
@@ -174,7 +177,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: CircleAvatar(
             backgroundColor: Theme.of(context).colorScheme.surface,
             child: IconButton(
-              icon: Icon(Icons.chevron_left, color: Theme.of(context).colorScheme.onSurface, size: 24),
+              icon: Icon(Icons.chevron_left,
+                  color: Theme.of(context).colorScheme.onSurface, size: 24),
               onPressed: () => Navigator.pop(context),
             ),
           ),
@@ -206,14 +210,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
           ),
-          
+
           SafeArea(
             bottom: false,
             child: Column(
               children: [
                 // AppBar spacer
                 const SizedBox(height: 20),
-                
+
                 // Main White Container
                 Expanded(
                   child: Container(
@@ -242,11 +246,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   backgroundColor: Colors.grey[200],
                                   backgroundImage: _selectedImage != null
                                       ? FileImage(_selectedImage!)
-                                      : (_currentPhotoUrl != null && _currentPhotoUrl!.isNotEmpty
+                                      : (_currentPhotoUrl != null &&
+                                              _currentPhotoUrl!.isNotEmpty
                                           ? NetworkImage(_currentPhotoUrl!)
                                           : null) as ImageProvider?,
-                                  child: (_selectedImage == null && (_currentPhotoUrl == null || _currentPhotoUrl!.isEmpty))
-                                      ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                                  child: (_selectedImage == null &&
+                                          (_currentPhotoUrl == null ||
+                                              _currentPhotoUrl!.isEmpty))
+                                      ? const Icon(Icons.person,
+                                          size: 60, color: Colors.grey)
                                       : null,
                                 ),
                                 // Overlay with camera icon centered
@@ -266,9 +274,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ],
                             ),
                           ),
-                          
+
                           const SizedBox(height: 32),
-              
+
                           // Username field
                           Align(
                             alignment: Alignment.centerLeft,
@@ -277,7 +285,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: Theme.of(context).colorScheme.onBackground,
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                             ),
@@ -289,22 +298,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               hintText: 'Enter username',
                               hintStyle: TextStyle(
                                 fontSize: 14,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.4),
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                               filled: true,
                               fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outline
+                                        .withOpacity(0.2)),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outline
+                                        .withOpacity(0.2)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    width: 2),
                               ),
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -313,7 +336,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           ),
                           const SizedBox(height: 20),
-              
+
                           // Age field
                           Align(
                             alignment: Alignment.centerLeft,
@@ -322,7 +345,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: Theme.of(context).colorScheme.onBackground,
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                             ),
@@ -335,22 +359,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               hintText: 'Enter age',
                               hintStyle: TextStyle(
                                 fontSize: 14,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.4),
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                               filled: true,
                               fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outline
+                                        .withOpacity(0.2)),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outline
+                                        .withOpacity(0.2)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
                               ),
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -359,7 +396,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           ),
                           const SizedBox(height: 40),
-                          
+
                           // Spacer to push button to bottom if needed, or just bottom padding
                           const SizedBox(height: 20),
                         ],
@@ -388,7 +425,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
-              disabledBackgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+              disabledBackgroundColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.6),
             ),
             child: _isLoading
                 ? SizedBox(
@@ -396,7 +434,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     width: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).colorScheme.onPrimary),
                     ),
                   )
                 : const Text(

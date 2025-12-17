@@ -63,7 +63,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             ),
           ),
-          
+
           // Main Content
           Column(
             children: [
@@ -95,12 +95,13 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              
+
               // White Container (Bottom Sheet Style)
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -208,7 +209,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),
                               ),
-                              disabledBackgroundColor: const Color(0xFF9759C4).withOpacity(0.6),
+                              disabledBackgroundColor:
+                                  const Color(0xFF9759C4).withOpacity(0.6),
                             ),
                             child: _isLoading
                                 ? const SizedBox(
@@ -216,7 +218,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
                                     ),
                                   )
                                 : const Text(
@@ -249,7 +252,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                 onTap: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                                    MaterialPageRoute(
+                                        builder: (_) => const SignUpScreen()),
                                   );
                                 },
                                 child: const Text(
@@ -311,8 +315,9 @@ class _SignInScreenState extends State<SignInScreen> {
 
       // Load user data before navigating
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-      final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-      
+      final profileProvider =
+          Provider.of<ProfileProvider>(context, listen: false);
+
       try {
         await Future.wait([
           taskProvider.loadTasks(),
@@ -335,14 +340,15 @@ class _SignInScreenState extends State<SignInScreen> {
       String errorMessage = 'Login gagal. Silakan coba lagi.';
       final errorString = e.toString().toLowerCase();
 
-      if (errorString.contains('invalid login credentials') || 
+      if (errorString.contains('invalid login credentials') ||
           errorString.contains('invalid_credentials')) {
         errorMessage = 'Email atau password salah';
       } else if (errorString.contains('email not confirmed')) {
         errorMessage = 'Email belum diverifikasi. Cek inbox Anda';
       } else if (errorString.contains('user not found')) {
         errorMessage = 'Akun tidak ditemukan';
-      } else if (errorString.contains('network') || errorString.contains('connection')) {
+      } else if (errorString.contains('network') ||
+          errorString.contains('connection')) {
         errorMessage = 'Koneksi internet bermasalah';
       } else if (errorString.contains('too many requests')) {
         errorMessage = 'Terlalu banyak percobaan. Coba lagi nanti';
@@ -368,5 +374,3 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 }
-
-
