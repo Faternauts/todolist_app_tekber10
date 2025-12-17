@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../services/supabase_service.dart';
-import '../providers/task_provider.dart';
-import '../providers/profile_provider.dart';
-import 'home_screen.dart';
+import 'profile_setup_screen.dart';
 import 'sign_in_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -21,8 +18,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final _usernameController = TextEditingController();
-  final _ageController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -32,8 +27,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
-    _ageController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -41,28 +34,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _handleSignUp() async {
-    final username = _usernameController.text.trim();
-    final age = _ageController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
-    if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      _showSnackBar('Mohon isi semua kolom wajib', isError: true);
+    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      _showSnackBar('Mohon isi semua kolom', isError: true);
       return;
-    }
-
-    if (username.length < 3) {
-      _showSnackBar('Username minimal 3 karakter', isError: true);
-      return;
-    }
-
-    if (age.isNotEmpty) {
-      final ageNum = int.tryParse(age);
-      if (ageNum == null || ageNum < 1 || ageNum > 150) {
-        _showSnackBar('Umur tidak valid', isError: true);
-        return;
-      }
     }
 
     if (!email.contains('@')) {
@@ -83,14 +61,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Sign up dengan user metadata (akan digunakan oleh database trigger)
+      // Sign up with email and password only
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
-        data: {
-          'username': username,
-          'age': age.isNotEmpty ? int.parse(age) : null,
-        },
       );
 
       if (response.user != null && mounted) {
@@ -109,35 +83,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           return;
         }
         
-        // Session is active - proceed to home
-        print('✅ Profile will be auto-created by database trigger');
-        
-        // Wait for session to establish
-        await Future.delayed(const Duration(milliseconds: 500));
-        
-        // Load user data
-        if (mounted) {
-          final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-          final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-          
-          try {
-            await Future.wait([
-              taskProvider.loadTasks(),
-              profileProvider.loadProfile(),
-            ]);
-            print('✅ User data loaded after signup');
-          } catch (e) {
-            print('⚠️ Warning: Could not load data after signup: $e');
-          }
-        }
-        
+        // Session is active - proceed to profile setup
         if (mounted) {
           _showSnackBar('Akun berhasil dibuat!', isError: false);
           
-          // Navigate to home screen
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
-            (route) => false,
+          // Navigate to profile setup screen
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const ProfileSetupScreen()),
           );
         }
       }
@@ -295,77 +247,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Username Label
-                        const Text(
-                          'Username',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                            fontFamily: AppTextStyles.fontFamily,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Username Input
-                        TextField(
-                          controller: _usernameController,
-                          decoration: InputDecoration(
-                            hintText: 'Enter username',
-                            hintStyle: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF9E9E9E),
-                              fontFamily: AppTextStyles.fontFamily,
-                            ),
-                            filled: true,
-                            fillColor: const Color(0xFFF5F5F5),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 16,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        
-                        // Age Label (Optional)
-                        const Text(
-                          'Age (optional)',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                            fontFamily: AppTextStyles.fontFamily,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Age Input
-                        TextField(
-                          controller: _ageController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: 'Enter age',
-                            hintStyle: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF9E9E9E),
-                              fontFamily: AppTextStyles.fontFamily,
-                            ),
-                            filled: true,
-                            fillColor: const Color(0xFFF5F5F5),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 16,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        
                         // Email Address Label
                         const Text(
                           'Email address',
