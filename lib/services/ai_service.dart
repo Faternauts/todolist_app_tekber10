@@ -15,10 +15,6 @@ class AIService {
 
       // If no API key, use fallback simulation
       if (apiKey == null || apiKey.isEmpty) {
-<<<<<<< HEAD
-=======
-        print('No API key found, using mock AI');
->>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
         return _simulateAIBreakdown(title);
       }
 
@@ -56,7 +52,6 @@ class AIService {
           // Parse the JSON response
           final result = jsonDecode(content);
           if (result['steps'] != null && result['steps'] is List) {
-<<<<<<< HEAD
             return {
               'steps': List<Map<String, dynamic>>.from(result['steps']),
               'totalEstimatedMinutes': result['totalEstimatedMinutes'] ??
@@ -70,17 +65,6 @@ class AIService {
       }
 
       // Fallback if API fails
-=======
-            return {'steps': List<Map<String, dynamic>>.from(result['steps']), 'totalEstimatedMinutes': result['totalEstimatedMinutes'] ?? _calculateTotalMinutes(result['steps'])};
-          }
-        }
-      } else {
-        print('OpenAI API error: ${response.statusCode} - ${response.body}');
-      }
-
-      // Fallback if API fails
-      print('API failed, using mock AI');
->>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
       return _simulateAIBreakdown(title);
     } catch (e) {
       print('Error generating AI steps: $e');

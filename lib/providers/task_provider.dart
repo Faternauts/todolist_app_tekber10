@@ -16,23 +16,9 @@ class TaskProvider with ChangeNotifier {
     return _tasks;
   }
 
-<<<<<<< HEAD
-  List<Task> get ongoingTasks =>
-      allTasks.where((task) => task.status == TaskStatus.ongoing).toList()
-        ..sort((a, b) => a.deadline.compareTo(b.deadline));
-  List<Task> get completedTasks => allTasks
-      .where((task) => task.status == TaskStatus.completed)
-      .toList()
-    ..sort((a, b) =>
-        (b.completedAt ?? b.createdAt).compareTo(a.completedAt ?? a.createdAt));
-  List<Task> get missedTasks =>
-      allTasks.where((task) => task.status == TaskStatus.missed).toList()
-        ..sort((a, b) => a.deadline.compareTo(b.deadline));
-=======
   List<Task> get ongoingTasks => allTasks.where((task) => task.status == TaskStatus.ongoing).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
   List<Task> get completedTasks => allTasks.where((task) => task.status == TaskStatus.completed).toList()..sort((a, b) => (b.completedAt ?? b.createdAt).compareTo(a.completedAt ?? a.createdAt));
   List<Task> get missedTasks => allTasks.where((task) => task.status == TaskStatus.missed).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
->>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
 
   // Clear all tasks (for logout)
   void clearTasks() {
@@ -40,15 +26,12 @@ class TaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-<<<<<<< HEAD
-=======
-  @visibleForTesting
+  // Helper for tests: set internal tasks directly (not for production use)
   void setTasksForTesting(List<Task> tasks) {
     _tasks = tasks;
     notifyListeners();
   }
 
->>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
   // Add task
   Future<Task> addTask(Task task) async {
     try {
@@ -92,18 +75,15 @@ class TaskProvider with ChangeNotifier {
         'user_id': currentUser.id,
         'title': task.title,
         'description': task.description,
-        'start_date':
-            task.startDate?.toIso8601String().split('T')[0], // format date only
-        'due_date':
-            task.deadline.toIso8601String().split('T')[0], // format date only
+        'start_date': task.startDate?.toIso8601String().split('T')[0], // format date only
+        'due_date': task.deadline.toIso8601String().split('T')[0], // format date only
         'status': statusString,
         'priority': priorityString,
         'duration_minutes': 30, // default 30 menit
         'steps': task.steps ?? [],
       };
 
-      final response =
-          await supabase.from('notes').insert(taskData).select().single();
+      final response = await supabase.from('notes').insert(taskData).select().single();
 
       // Update task id dengan uuid dari Supabase
       final newTask = Task(
@@ -270,15 +250,7 @@ class TaskProvider with ChangeNotifier {
         throw Exception('User not logged in');
       }
 
-<<<<<<< HEAD
-      final response = await supabase
-          .from('notes')
-          .select()
-          .eq('user_id', currentUser.id)
-          .order('created_at', ascending: false);
-=======
       final response = await supabase.from('notes').select().eq('user_id', currentUser.id).order('created_at', ascending: false);
->>>>>>> 0b9244827c750d285f69e65a618617536c43a3cf
 
       _tasks = (response as List).map((json) {
         // Map string status dari Supabase ke enum
@@ -337,10 +309,7 @@ class TaskProvider with ChangeNotifier {
           createdAt: DateTime.parse(json['created_at']),
           completedAt: null, // notes table tidak punya completed_at
           steps: json['steps'] != null && json['steps'] is List
-              ? List<Map<String, dynamic>>.from((json['steps'] as List).map(
-                  (x) => x is Map
-                      ? Map<String, dynamic>.from(x)
-                      : {'step': x.toString(), 'estimatedMinutes': 10}))
+              ? List<Map<String, dynamic>>.from((json['steps'] as List).map((x) => x is Map ? Map<String, dynamic>.from(x) : {'step': x.toString(), 'estimatedMinutes': 10}))
               : null,
         );
       }).toList();
@@ -385,16 +354,14 @@ class TaskProvider with ChangeNotifier {
       final createdAt = task.createdAt;
 
       // Check if task is in current week
-      if (createdAt.compareTo(startOfWeek) >= 0 &&
-          createdAt.isBefore(endOfWeek)) {
+      if (createdAt.compareTo(startOfWeek) >= 0 && createdAt.isBefore(endOfWeek)) {
         final dayIndex = createdAt.weekday - 1;
         dailyCounts[dayIndex]++;
         currentWeekTotal++;
       }
 
       // Check if task is in previous week
-      if (createdAt.compareTo(startOfPreviousWeek) >= 0 &&
-          createdAt.isBefore(endOfPreviousWeek)) {
+      if (createdAt.compareTo(startOfPreviousWeek) >= 0 && createdAt.isBefore(endOfPreviousWeek)) {
         previousWeekTotal++;
       }
     }
@@ -402,15 +369,13 @@ class TaskProvider with ChangeNotifier {
     // Calculate progress
     double progress = 0;
     if (previousWeekTotal > 0) {
-      progress =
-          ((currentWeekTotal - previousWeekTotal) / previousWeekTotal) * 100;
+      progress = ((currentWeekTotal - previousWeekTotal) / previousWeekTotal) * 100;
     } else if (currentWeekTotal > 0) {
       progress = 100;
     }
 
     // Find max for scaling
-    int maxCount =
-        dailyCounts.reduce((curr, next) => curr > next ? curr : next);
+    int maxCount = dailyCounts.reduce((curr, next) => curr > next ? curr : next);
     if (maxCount == 0) maxCount = 1;
 
     return WeeklyStats(
