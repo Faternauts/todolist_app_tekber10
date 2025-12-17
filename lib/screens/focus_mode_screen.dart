@@ -663,14 +663,19 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                 }
 
                 final step = steps[index];
-                final isCompleted = _completedSteps.contains(index);
+                // Check if step is completed OR task is completed
+                final isCompleted = _completedSteps.contains(index) || 
+                                   widget.task.status == TaskStatus.completed;
 
                 // Extract step text and time estimate from map
                 final stepText = step['step']?.toString() ?? step.toString();
                 final estimatedMinutes = step['estimatedMinutes'] as int?;
 
                 return GestureDetector(
-                  onTap: () => _toggleStep(index),
+                  // Disable tap if task is already completed
+                  onTap: widget.task.status == TaskStatus.completed 
+                      ? null 
+                      : () => _toggleStep(index),
                   child: Container(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     margin: const EdgeInsets.only(bottom: AppSpacing.sm),

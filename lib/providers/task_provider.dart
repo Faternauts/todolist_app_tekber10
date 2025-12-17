@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/task.dart';
 import '../services/supabase_service.dart';
@@ -308,8 +309,8 @@ class TaskProvider with ChangeNotifier {
           priority: priority,
           createdAt: DateTime.parse(json['created_at']),
           completedAt: null, // notes table tidak punya completed_at
-          steps: json['steps'] != null && json['steps'] is List
-              ? List<Map<String, dynamic>>.from((json['steps'] as List).map((x) => x is Map ? Map<String, dynamic>.from(x) : {'step': x.toString(), 'estimatedMinutes': 10}))
+          steps: json['steps'] != null 
+              ? _parseSteps(json['steps'])
               : null,
         );
       }).toList();
@@ -383,6 +384,49 @@ class TaskProvider with ChangeNotifier {
       progress: progress,
       maxCount: maxCount,
     );
+  }
+
+  /// Parse steps from various formats (JSONB, text[], or List)
+  static List<Map<String, dynamic>>? _parseSteps(dynamic stepsData) {
+    if (stepsData == null) return null;
+
+    try {
+      if (stepsData is List) {
+        return stepsData.map((step) {
+          if (step is Map) {
+            return Map<String, dynamic>.from(step);
+          } else if (step is String) {
+            String cleanStep = step.replaceAll(RegExp(r'[{}"]'), '');
+            return {
+              'step': cleanStep,
+              'estimatedMinutes': 10,
+            };
+          } else {
+            return {
+              'step': step.toString(),
+              'estimatedMinutes': 10,
+            };
+          }
+        }).toList();
+      }
+
+      // If it's a string (shouldn't happen with JSONB, but handle it)
+      if (stepsData is String) {
+        try {
+          final decoded = jsonDecode(stepsData);
+          if (decoded is List) {
+            return _parseSteps(decoded);
+          }
+        } catch (e) {
+          print('Could not parse steps string: $e');
+        }
+      }
+
+      return null;
+    } catch (e) {
+      print('Error parsing steps: $e');
+      return null;
+    }
   }
 }
 
