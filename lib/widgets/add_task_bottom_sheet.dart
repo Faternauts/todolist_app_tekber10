@@ -65,7 +65,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: AppColors.primaryPurple, onPrimary: Colors.white, surface: Colors.white, onSurface: AppColors.textPrimary),
+            colorScheme: ColorScheme.light(primary: Theme.of(context).colorScheme.primary, onPrimary: Theme.of(context).colorScheme.onPrimary, surface: Theme.of(context).colorScheme.surface, onSurface: Theme.of(context).colorScheme.onSurface),
           ),
           child: child!,
         );
@@ -88,7 +88,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: AppColors.primaryPurple, onPrimary: Colors.white, surface: Colors.white, onSurface: AppColors.textPrimary),
+            colorScheme: ColorScheme.light(primary: Theme.of(context).colorScheme.primary, onPrimary: Theme.of(context).colorScheme.onPrimary, surface: Theme.of(context).colorScheme.surface, onSurface: Theme.of(context).colorScheme.onSurface),
           ),
           child: child!,
         );
@@ -156,8 +156,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
       position: _slideAnimation,
       child: Container(
         height: MediaQuery.of(context).size.height * 0.85,
-        decoration: const BoxDecoration(
-          color: AppColors.backgroundWhite,
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xxl)),
         ),
         child: Column(
@@ -168,7 +168,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Add new task', style: AppTextStyles.h4.copyWith(color: AppColors.primaryDark)),
+                  Text('Add new task', style: AppTextStyles.h4.copyWith(color: Theme.of(context).colorScheme.onSurface)),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Container(
@@ -176,9 +176,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                       height: 32,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.borderLight),
+                        border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                       ),
-                      child: const Icon(Icons.close, size: 18, color: AppColors.textSecondary),
+                      child: Icon(Icons.close, size: 18, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                     ),
                   ),
                 ],
@@ -195,27 +195,27 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                     // Task Title
                     Text(
                       'Task title',
-                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     TextFormField(
                       controller: _titleController,
                       decoration: InputDecoration(
                         hintText: 'Enter title',
-                        hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
+                        hintStyle: AppTextStyles.bodyMedium.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
-                          borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
-                          borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
-                          borderSide: const BorderSide(color: AppColors.primaryPurple, width: 2),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                         ),
                         contentPadding: const EdgeInsets.all(AppSpacing.md),
                       ),
@@ -232,7 +232,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                     // Description
                     Text(
                       'Description',
-                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     TextFormField(
@@ -240,20 +240,20 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                       maxLines: 4,
                       decoration: InputDecoration(
                         hintText: 'Enter description',
-                        hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
+                        hintStyle: AppTextStyles.bodyMedium.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
-                          borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
-                          borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
-                          borderSide: const BorderSide(color: AppColors.primaryPurple, width: 2),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                         ),
                         contentPadding: const EdgeInsets.all(AppSpacing.md),
                       ),
@@ -270,7 +270,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                             children: [
                               Text(
                                 'Start date',
-                                style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                                style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                               ),
                               const SizedBox(height: AppSpacing.sm),
                               InkWell(
@@ -278,19 +278,19 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                                 child: Container(
                                   padding: const EdgeInsets.all(AppSpacing.md),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFF9FAFB),
+                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : const Color(0xFFF9FAFB),
                                     borderRadius: BorderRadius.circular(AppRadius.lg),
-                                    border: Border.all(color: const Color(0xFFF3F4F6)),
+                                    border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                                   ),
                                   child: Row(
                                     children: [
                                       Expanded(
                                         child: Text(
                                           _startDate != null ? DateFormat('dd/MM/yy').format(_startDate!) : 'dd/mm/yy',
-                                          style: AppTextStyles.bodyMedium.copyWith(color: _startDate != null ? AppColors.textPrimary : AppColors.textHint),
+                                          style: AppTextStyles.bodyMedium.copyWith(color: _startDate != null ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
                                         ),
                                       ),
-                                      SvgPicture.asset('images/icons/calendar.svg', width: 18, height: 18, colorFilter: const ColorFilter.mode(AppColors.textHint, BlendMode.srcIn)),
+                                      SvgPicture.asset('images/icons/calendar.svg', width: 18, height: 18, colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface.withOpacity(0.4), BlendMode.srcIn)),
                                     ],
                                   ),
                                 ),
@@ -305,7 +305,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                             children: [
                               Text(
                                 'Due date',
-                                style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                                style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                               ),
                               const SizedBox(height: AppSpacing.sm),
                               InkWell(
@@ -313,19 +313,19 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                                 child: Container(
                                   padding: const EdgeInsets.all(AppSpacing.md),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFF9FAFB),
+                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : const Color(0xFFF9FAFB),
                                     borderRadius: BorderRadius.circular(AppRadius.lg),
-                                    border: Border.all(color: const Color(0xFFF3F4F6)),
+                                    border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                                   ),
                                   child: Row(
                                     children: [
                                       Expanded(
                                         child: Text(
                                           _dueDate != null ? DateFormat('dd/MM/yy').format(_dueDate!) : 'dd/mm/yy',
-                                          style: AppTextStyles.bodyMedium.copyWith(color: _dueDate != null ? AppColors.textPrimary : AppColors.textHint),
+                                          style: AppTextStyles.bodyMedium.copyWith(color: _dueDate != null ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
                                         ),
                                       ),
-                                      SvgPicture.asset('images/icons/calendar.svg', width: 18, height: 18, colorFilter: const ColorFilter.mode(AppColors.textHint, BlendMode.srcIn)),
+                                      SvgPicture.asset('images/icons/calendar.svg', width: 18, height: 18, colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface.withOpacity(0.4), BlendMode.srcIn)),
                                     ],
                                   ),
                                 ),
@@ -341,7 +341,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                     // Priority
                     Text(
                       'Priority',
-                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Row(
@@ -359,13 +359,13 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                                 decoration: BoxDecoration(
-                                  color: isSelected ? AppColors.primaryLight : AppColors.backgroundWhite,
+                                  color: isSelected ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(AppRadius.full),
-                                  border: Border.all(color: isSelected ? AppColors.primaryPurple : AppColors.borderLight, width: isSelected ? 2 : 1),
+                                  border: Border.all(color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outline.withOpacity(0.2), width: isSelected ? 2 : 1),
                                 ),
                                 child: Text(
                                   priority.name.toUpperCase(),
-                                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: isSelected ? AppColors.primaryDark : AppColors.textSecondary),
+                                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -384,8 +384,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
             // Footer Button
             Container(
               padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: Color(0xFFF3F4F6))),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2))),
               ),
               child: SafeArea(
                 child: SizedBox(
@@ -394,14 +394,14 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> with SingleTick
                   child: ElevatedButton(
                     onPressed: _isGeneratingSteps ? null : _handleSubmit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentPurple,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.full)),
                       elevation: 4,
                     ),
                     child: _isGeneratingSteps
-                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                        : Text('Add new task', style: AppTextStyles.button.copyWith(color: Colors.white)),
+                        ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary, strokeWidth: 2))
+                        : Text('Add new task', style: AppTextStyles.button.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
                   ),
                 ),
               ),

@@ -141,7 +141,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                 'Are you sure you want to\ncomplete this task?',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.h3.copyWith(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -158,11 +158,11 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        side: BorderSide(color: AppColors.borderLight),
+                        side: BorderSide(color: Theme.of(context).colorScheme.outline),
                       ),
                       child: Text(
                         'Complete',
-                        style: AppTextStyles.button.copyWith(color: AppColors.textPrimary),
+                        style: AppTextStyles.button.copyWith(color: Theme.of(context).colorScheme.onSurface),
                       ),
                     ),
                   ),
@@ -172,7 +172,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                     child: ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(false),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryDark,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -181,7 +181,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                       ),
                       child: Text(
                         'Cancel',
-                        style: AppTextStyles.button.copyWith(color: Colors.white),
+                        style: AppTextStyles.button.copyWith(color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                   ),
@@ -209,7 +209,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
     final steps = widget.task.steps ?? [];
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           // Header Section with decorative background
@@ -218,8 +218,8 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.primaryPurple,
-                    AppColors.primaryPurple.withOpacity(0.55),
+                    Theme.of(context).colorScheme.primaryContainer,
+                    Theme.of(context).colorScheme.primaryContainer.withOpacity(0.55),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -262,7 +262,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                               // Back button
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.surface,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
@@ -273,19 +273,19 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                   ],
                                 ),
                                 child: IconButton(
-                                  icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.textPrimary),
+                                  icon: Icon(Icons.chevron_left, size: 28, color: Theme.of(context).colorScheme.onSurface),
                                   onPressed: () => Navigator.of(context).pop(),
                                 ),
                               ),
                               // Title
                               Text(
                                 'Task details',
-                                style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+                                style: AppTextStyles.h3.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer, fontWeight: FontWeight.w600),
                               ),
                               // Edit button
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.surface,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
@@ -296,7 +296,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                   ],
                                 ),
                                 child: IconButton(
-                                  icon: SvgPicture.asset('images/icons/pencil.svg', width: 22, height: 22, colorFilter: const ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn)),
+                                  icon: SvgPicture.asset('images/icons/pencil.svg', width: 22, height: 22, colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn)),
                                   onPressed: () async {
                                     final updatedTask = await EditTaskBottomSheet.show(context, widget.task);
                                     if (updatedTask != null && mounted) {
@@ -319,7 +319,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                           // Task Title
                           Text(
                             widget.task.title,
-                            style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+                            style: AppTextStyles.h2.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: AppSpacing.md),
@@ -329,21 +329,21 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                               width: MediaQuery.of(context).size.width * 0.6,
                               padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.lg),
                               decoration: BoxDecoration(
-                                color: Colors.deepPurple,
+                                color: Theme.of(context).colorScheme.primary,
                                 borderRadius: BorderRadius.circular(AppRadius.xxl),
-                                boxShadow: [BoxShadow(color: AppColors.accentBlue.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 8))],
+                                boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.primary.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 8))],
                               ),
                               child: Column(
                                 children: [
-                                  Text(_formatTime(_remainingSeconds), style: AppTextStyles.h3.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                                  Text(_formatTime(_remainingSeconds), style: AppTextStyles.h3.copyWith(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
                                   const SizedBox(height: AppSpacing.xs),
                                   ElevatedButton.icon(
                                     onPressed: _toggleTimer,
                                     icon: Icon(_isTimerRunning ? Icons.pause : Icons.play_arrow, size: 16),
-                                    label: Text(_isTimerRunning ? 'Pause Focus' : 'Start Focus', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white)),
+                                    label: Text(_isTimerRunning ? 'Pause Focus' : 'Start Focus', style: AppTextStyles.bodyMedium.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white.withOpacity(0.2),
-                                      foregroundColor: Colors.white,
+                                      backgroundColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
+                                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.full)),
                                     ),
@@ -368,15 +368,15 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                 if (widget.task.totalEstimatedMinutes != null) ...[
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-                    decoration: BoxDecoration(color: AppColors.accentBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(AppRadius.full)),
+                    decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(AppRadius.full)),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.schedule, size: 16, color: AppColors.accentBlue),
+                        Icon(Icons.schedule, size: 16, color: Theme.of(context).colorScheme.primary),
                         const SizedBox(width: 4),
                         Text(
                           'Est. ${widget.task.totalEstimatedMinutes} minutes',
-                          style: AppTextStyles.caption.copyWith(color: AppColors.accentBlue, fontWeight: FontWeight.w600),
+                          style: AppTextStyles.caption.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
@@ -385,7 +385,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                 ],
                 Text(
                   'One step at a time.',
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w500),
+                  style: AppTextStyles.bodyMedium.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -395,7 +395,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             child: Column(
               children: [
-                const Divider(height: 1, color: Color(0xFFF3F4F6)),
+                Divider(height: 1, color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                 InkWell(
                   onTap: () {
                     setState(() {
@@ -407,16 +407,16 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Details', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                        Text('Details', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
                         Icon(
                           _showDetails ? Icons.expand_less : Icons.expand_more,
-                          color: AppColors.textSecondary,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                         ),
                       ],
                     ),
                   ),
                 ),
-                const Divider(height: 1, color: Color(0xFFF3F4F6)),
+                Divider(height: 1, color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                 if (_showDetails) ...[
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
@@ -426,15 +426,15 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                         // Due Date Row
                         Row(
                           children: [
-                            const Icon(Icons.calendar_today, size: 18, color: AppColors.textSecondary),
+                            Icon(Icons.calendar_today, size: 18, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                             const SizedBox(width: AppSpacing.md),
-                            Text('Due', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                            Text('Due', style: AppTextStyles.bodySmall.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                             const SizedBox(width: AppSpacing.md),
                             Text(
                               _formatDeadline(widget.task.deadline),
                               style: AppTextStyles.bodySmall.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ],
@@ -443,9 +443,9 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                         // Priority Row
                         Row(
                           children: [
-                            const Icon(Icons.flag, size: 18, color: AppColors.textSecondary),
+                            Icon(Icons.flag, size: 18, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                             const SizedBox(width: AppSpacing.md),
-                            Text('Priority', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                            Text('Priority', style: AppTextStyles.bodySmall.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                             const SizedBox(width: AppSpacing.md),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
@@ -467,7 +467,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                       ],
                     ),
                   ),
-                  const Divider(height: 1, color: Color(0xFFF3F4F6)),
+                  Divider(height: 1, color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                 ],
               ],
             ),
@@ -485,23 +485,23 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                     padding: const EdgeInsets.all(AppSpacing.xl),
                     margin: const EdgeInsets.only(bottom: AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: AppColors.backgroundWhite,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(AppRadius.xl),
-                      border: Border.all(color: AppColors.borderLight),
+                      border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                     ),
                     child: Column(
                       children: [
-                        const Icon(Icons.lightbulb_outline, size: 48, color: AppColors.textHint),
+                        Icon(Icons.lightbulb_outline, size: 48, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
                         const SizedBox(height: AppSpacing.md),
                         Text(
                           'No specific steps for this task.',
-                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                          style: AppTextStyles.bodyMedium.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
                           'Just dive in and get started!',
-                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textHint),
+                          style: AppTextStyles.bodySmall.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -522,9 +522,9 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                     padding: const EdgeInsets.all(AppSpacing.md),
                     margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                     decoration: BoxDecoration(
-                      color: AppColors.backgroundWhite,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(AppRadius.xl),
-                      border: Border.all(color: AppColors.borderLight),
+                      border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                       boxShadow: isCompleted ? [] : const [AppShadows.small],
                     ),
                     child: Row(
@@ -536,10 +536,10 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                           margin: const EdgeInsets.only(top: 2),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: isCompleted ? AppColors.accentBlue : AppColors.borderLight, width: 2),
-                            color: isCompleted ? AppColors.accentBlue : Colors.transparent,
+                            border: Border.all(color: isCompleted ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outline.withOpacity(0.3), width: 2),
+                            color: isCompleted ? Theme.of(context).colorScheme.primary : Colors.transparent,
                           ),
-                          child: isCompleted ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
+                          child: isCompleted ? Icon(Icons.check, size: 12, color: Theme.of(context).colorScheme.onPrimary) : null,
                         ),
                         const SizedBox(width: AppSpacing.md),
                         Expanded(

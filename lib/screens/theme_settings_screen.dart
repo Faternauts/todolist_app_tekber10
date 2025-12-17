@@ -11,18 +11,19 @@ class ThemeSettingsScreen extends StatefulWidget {
 }
 
 class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
-
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryDark,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         elevation: 0,
         title: Text(
           'Settings',
-          style: AppTextStyles.h4.copyWith(color: Colors.white),
+          style: AppTextStyles.h4
+              .copyWith(color: Theme.of(context).colorScheme.onPrimary),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -38,15 +39,15 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               Text(
                 'Theme Mode',
                 style: AppTextStyles.h4.copyWith(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(AppRadius.lg),
-                  boxShadow: const [AppShadows.small],
+                  boxShadow: isDark ? [] : const [AppShadows.small],
                 ),
                 child: Column(
                   children: [
@@ -86,7 +87,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               Text(
                 'Color Theme',
                 style: AppTextStyles.h4.copyWith(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -113,11 +114,13 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                     borderRadius: BorderRadius.circular(AppRadius.lg),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         border: Border.all(
                           color: isSelected
-                              ? AppColors.primaryPurple
-                              : AppColors.borderLight,
+                              ? Theme.of(context).colorScheme.primary
+                              : (isDark
+                                  ? Colors.grey[700]!
+                                  : AppColors.borderLight),
                           width: isSelected ? 2 : 1,
                         ),
                         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -146,8 +149,10 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                                         ? FontWeight.bold
                                         : FontWeight.normal,
                                     color: isSelected
-                                        ? AppColors.primaryPurple
-                                        : AppColors.textPrimary,
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
                                   ),
                                 ),
                               ],
@@ -159,13 +164,14 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                               right: 8,
                               child: Container(
                                 padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primaryPurple,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.check,
-                                  color: Colors.white,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   size: 16,
                                 ),
                               ),
@@ -183,53 +189,55 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               Text(
                 'Preview',
                 style: AppTextStyles.h4.copyWith(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
               Container(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(AppRadius.lg),
-                  boxShadow: const [AppShadows.small],
+                  boxShadow: isDark ? [] : const [AppShadows.small],
                 ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
                       'Button Styles',
                       style: AppTextStyles.bodyLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
                     const SizedBox(height: AppSpacing.md),
                     Wrap(
                       spacing: AppSpacing.sm,
                       runSpacing: AppSpacing.sm,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {},
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryPurple,
-                            foregroundColor: Colors.white,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
                           ),
                           child: const Text('Elevated'),
-                          ),
-                          FilledButton(
-                            onPressed: () {},
-                            child: const Text('Filled'),
-                          ),
-                          OutlinedButton(
-                            onPressed: () {},
-                            child: const Text('Outlined'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                        FilledButton(
+                          onPressed: () {},
+                          child: const Text('Filled'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () {},
+                          child: const Text('Outlined'),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              
+              ),
+
               const SizedBox(height: AppSpacing.xl),
             ],
           );
@@ -260,14 +268,16 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               padding: const EdgeInsets.all(AppSpacing.sm),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.primaryLight
-                    : const Color(0xFFF9FAFB),
+                    ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[800]
+                        : const Color(0xFFF9FAFB)),
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Icon(
                 icon,
                 color: isSelected
-                    ? AppColors.primaryPurple
+                    ? Theme.of(context).colorScheme.primary
                     : AppColors.textHint,
                 size: 20,
               ),
@@ -281,22 +291,25 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                     title,
                     style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   Text(
                     subtitle,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle,
-                color: AppColors.primaryPurple,
+                color: Theme.of(context).colorScheme.primary,
               ),
           ],
         ),

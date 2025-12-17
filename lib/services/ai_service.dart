@@ -14,11 +14,8 @@ class AIService {
 
       // If no API key, use fallback simulation
       if (apiKey == null || apiKey.isEmpty) {
-        print('⚠️ No API key found, using mock AI');
         return _simulateAIBreakdown(title);
       }
-
-      print('✅ API key found, calling OpenAI API for: $title');
 
       // OpenAI API endpoint
       final url = Uri.parse('https://api.openai.com/v1/chat/completions');
@@ -42,27 +39,23 @@ class AIService {
           .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
-        print('✅ OpenAI API response received');
         final data = jsonDecode(response.body);
 
         // Extract text from OpenAI response
         final content = data['choices']?[0]?['message']?['content'];
 
         if (content != null) {
-          print('✅ Parsing AI response...');
           // Parse the JSON response
           final result = jsonDecode(content);
           if (result['steps'] != null && result['steps'] is List) {
-            print('✅ AI breakdown generated successfully with ${result['steps'].length} steps');
             return {'steps': List<Map<String, dynamic>>.from(result['steps']), 'totalEstimatedMinutes': result['totalEstimatedMinutes'] ?? _calculateTotalMinutes(result['steps'])};
           }
         }
       } else {
-        print('❌ OpenAI API error: ${response.statusCode} - ${response.body}');
+        print('Error: OpenAI API error: ${response.statusCode} - ${response.body}');
       }
 
       // Fallback if API fails
-      print('⚠️ API failed, using mock AI');
       return _simulateAIBreakdown(title);
     } catch (e) {
       print('❌ Error generating AI steps: $e');

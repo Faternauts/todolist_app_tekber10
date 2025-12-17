@@ -3,18 +3,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;
-  int _themeIndex = 0;
+  int _themeIndex = 1; // Default to Purple theme
 
   ThemeMode get themeMode => _themeMode;
   int get themeIndex => _themeIndex;
 
   // Available themes
   final List<ThemeData> lightThemes = [
-    // Default Light Theme
+    // Blue Light Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.light),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue, brightness: Brightness.light),
       textTheme: const TextTheme(
         displayLarge: TextStyle(fontFamily: 'SFProDisplay'),
         displayMedium: TextStyle(fontFamily: 'SFProDisplay'),
@@ -37,46 +38,53 @@ class ThemeProvider with ChangeNotifier {
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple, brightness: Brightness.light),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.purple, brightness: Brightness.light),
     ),
     // Green Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, brightness: Brightness.light),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green, brightness: Brightness.light),
     ),
     // Orange Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange, brightness: Brightness.light),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.orange, brightness: Brightness.light),
     ),
   ];
 
   final List<ThemeData> darkThemes = [
-    // Default Dark Theme
+    // Blue Dark Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue, brightness: Brightness.dark),
     ),
     // Purple Dark Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple, brightness: Brightness.dark),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.purple, brightness: Brightness.dark),
     ),
     // Green Dark Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, brightness: Brightness.dark),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green, brightness: Brightness.dark),
     ),
     // Orange Dark Theme
     ThemeData(
       useMaterial3: true,
       fontFamily: 'SFProDisplay',
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange, brightness: Brightness.dark),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.orange, brightness: Brightness.dark),
     ),
   ];
 
@@ -110,7 +118,8 @@ class ThemeProvider with ChangeNotifier {
   Future<void> loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
     final themeModeIndex = prefs.getInt('themeMode') ?? 0;
-    final themeColorIndex = prefs.getInt('themeIndex') ?? 0;
+    final themeColorIndex =
+        prefs.getInt('themeIndex') ?? 1; // Default to Purple
 
     _themeMode = ThemeMode.values[themeModeIndex];
     _themeIndex = themeColorIndex;

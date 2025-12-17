@@ -164,7 +164,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryPurple,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -172,18 +172,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             child: IconButton(
-              icon: const Icon(Icons.chevron_left, color: AppColors.textPrimary, size: 24),
+              icon: Icon(Icons.chevron_left, color: Theme.of(context).colorScheme.onSurface, size: 24),
               onPressed: () => Navigator.pop(context),
             ),
           ),
         ),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'Edit profile',
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
             fontSize: 16,
             fontWeight: FontWeight.w600,
             fontFamily: AppTextStyles.fontFamily,
@@ -218,8 +218,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 Expanded(
                   child: Container(
                     width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
@@ -272,12 +272,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           // Username field
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: const Text(
+                            child: Text(
                               'Username',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                                color: Theme.of(context).colorScheme.onBackground,
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                             ),
@@ -287,24 +287,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             controller: _usernameController,
                             decoration: InputDecoration(
                               hintText: 'Enter username',
-                              hintStyle: const TextStyle(
+                              hintStyle: TextStyle(
                                 fontSize: 14,
-                                color: AppColors.priorityLow,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                               filled: true,
-                              fillColor: Colors.white, 
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: AppColors.borderLighter),
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: AppColors.borderLighter),
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: AppColors.primaryPurple),
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                               ),
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -317,12 +317,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           // Age field
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: const Text(
+                            child: Text(
                               'Age (optional)',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                                color: Theme.of(context).colorScheme.onBackground,
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                             ),
@@ -333,24 +333,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               hintText: 'Enter age',
-                              hintStyle: const TextStyle(
+                              hintStyle: TextStyle(
                                 fontSize: 14,
-                                color: AppColors.priorityLow,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: AppColors.borderLighter),
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: AppColors.borderLighter),
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(color: AppColors.primaryPurple),
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                               ),
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -375,28 +375,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // Floating Save Button at the bottom
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(24),
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: SizedBox(
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
             onPressed: _isLoading ? null : _saveProfile,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.accentPurple,
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
-              disabledBackgroundColor: AppColors.primaryPurple.withOpacity(0.6),
+              disabledBackgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.6),
             ),
             child: _isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     height: 24,
                     width: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary),
                     ),
                   )
                 : const Text(

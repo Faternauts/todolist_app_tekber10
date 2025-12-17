@@ -24,7 +24,6 @@ class TaskProvider with ChangeNotifier {
   void clearTasks() {
     _tasks = [];
     notifyListeners();
-    print('✅ Tasks cleared');
   }
   
   // Add task
@@ -245,12 +244,7 @@ class TaskProvider with ChangeNotifier {
         throw Exception('User not logged in');
       }
 
-      print('🔍 DEBUG: Loading tasks for user: ${currentUser.id}');
-      print('🔍 DEBUG: User email: ${currentUser.email}');
-
       final response = await supabase.from('notes').select().eq('user_id', currentUser.id).order('created_at', ascending: false);
-      
-      print('🔍 DEBUG: Loaded ${(response as List).length} tasks');
 
       _tasks = (response as List).map((json) {
         // Map string status dari Supabase ke enum

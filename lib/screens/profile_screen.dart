@@ -15,7 +15,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryPurple,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -23,18 +23,18 @@ class ProfileScreen extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black, size: 20),
+              icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface, size: 20),
               onPressed: () => Navigator.pop(context),
             ),
           ),
         ),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'Profile',
           style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
             fontSize: 16,
             fontWeight: FontWeight.w600,
             fontFamily: AppTextStyles.fontFamily,
@@ -64,8 +64,8 @@ class ProfileScreen extends StatelessWidget {
           Expanded(
             child: Container(
               width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
@@ -107,19 +107,19 @@ class ProfileScreen extends StatelessWidget {
                                           children: [
                                             Text(
                                               profile.name,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.black,
+                                                color: Theme.of(context).colorScheme.onBackground,
                                                 fontFamily: AppTextStyles.fontFamily,
                                               ),
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
                                               profile.age != null ? '${profile.age} years old' : 'No age set',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 14,
-                                                color: Colors.grey,
+                                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                                 fontFamily: AppTextStyles.fontFamily,
                                               ),
                                             ),
@@ -136,8 +136,8 @@ class ProfileScreen extends StatelessWidget {
                                                   );
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                  backgroundColor: const Color(0xFF9759C4),
-                                                  foregroundColor: Colors.white,
+                                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius: BorderRadius.circular(24),
                                                   ),
@@ -203,16 +203,16 @@ class ProfileScreen extends StatelessWidget {
                                   return Container(
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: Theme.of(context).cardColor,
                                       borderRadius: BorderRadius.circular(16),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
+                                          color: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
                                           blurRadius: 10,
                                           offset: const Offset(0, 4),
                                         ),
                                       ],
-                                      border: Border.all(color: const Color(0xFFEEEEEE)),
+                                      border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.1)),
                                     ),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,10 +220,10 @@ class ProfileScreen extends StatelessWidget {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            const Text(
+                                            Text(
                                               'Weekly statistics',
                                               style: TextStyle(
-                                                color: Colors.black,
+                                                color: Theme.of(context).colorScheme.onSurface,
                                                 fontSize: 16,
                                                 fontFamily: AppTextStyles.fontFamily,
                                                 fontWeight: FontWeight.bold,
@@ -291,26 +291,6 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               const Spacer(),
                               const SizedBox(height: 32),
-
-                              // Delete Account
-                              SizedBox(
-                                width: double.infinity,
-                                height: 48,
-                                child: OutlinedButton(
-                                  onPressed: () {
-                                    // TODO: Implement delete account
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.black,
-                                    side: const BorderSide(color: Color(0xFFEEEEEE)),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                  ),
-                                  child: const Text('Delete account'),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
 
                               // Logout
                               SizedBox(
