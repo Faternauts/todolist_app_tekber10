@@ -194,31 +194,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        // Forgot Password
-                        Align(
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            onPressed: () {
-                              // TODO: Implement forgot password
-                            },
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(0, 0),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: const Text(
-                              'Forgot password?',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                                fontFamily: AppTextStyles.fontFamily,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 32),
                         // Sign In Button
                         SizedBox(
                           width: double.infinity,
@@ -252,84 +228,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                       fontFamily: AppTextStyles.fontFamily,
                                     ),
                                   ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        // Or sign in with
-                        const Center(
-                          child: Text(
-                            'Or sign in with',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF717171),
-                              fontFamily: AppTextStyles.fontFamily,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        // Google Sign In Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
-                          child: OutlinedButton.icon(
-                            onPressed: () {
-                              // TODO: Implement Google sign in
-                            },
-                            icon: Image.network(
-                              'https://www.google.com/favicon.ico',
-                              width: 20,
-                              height: 20,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.g_mobiledata, size: 20, color: Colors.black);
-                              },
-                            ),
-                            label: const Text(
-                              'Sign in with Google',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                                fontFamily: AppTextStyles.fontFamily,
-                              ),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Color(0xFFEEEEEE)),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Facebook Sign In Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
-                          child: OutlinedButton.icon(
-                            onPressed: () {
-                              // TODO: Implement Facebook sign in
-                            },
-                            icon: const Icon(
-                              Icons.facebook,
-                              size: 20,
-                              color: Color(0xFF1877F2),
-                            ),
-                            label: const Text(
-                              'Sign in with Facebook',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                                fontFamily: AppTextStyles.fontFamily,
-                              ),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Color(0xFFEEEEEE)),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                            ),
                           ),
                         ),
                         const SizedBox(height: 24),
