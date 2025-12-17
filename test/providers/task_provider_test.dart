@@ -337,81 +337,275 @@ void main() {
     });
   });
 
-  group('Status String Mapping', () {
-    test('should map ongoing status to string correctly', () {
-      String statusToString(TaskStatus status) {
-        switch (status) {
-          case TaskStatus.ongoing:
-            return 'ongoing';
-          case TaskStatus.completed:
-            return 'completed';
-          case TaskStatus.missed:
-            return 'missed';
-        }
+  group('String to Enum Mapping (loadTasks logic)', () {
+    // Helper function that replicates the exact JSON-to-Task mapping logic from TaskProvider.loadTasks
+    // This tests the same mapping logic that loadTasks uses when converting Supabase JSON responses to Task objects
+    Task taskFromSupabaseJson(Map<String, dynamic> json) {
+      // Map string status dari Supabase ke enum (same logic as loadTasks)
+      TaskStatus status;
+      switch (json['status']) {
+        case 'ongoing':
+          status = TaskStatus.ongoing;
+          break;
+        case 'completed':
+          status = TaskStatus.completed;
+          break;
+        case 'missed':
+          status = TaskStatus.missed;
+          break;
+        default:
+          status = TaskStatus.ongoing;
       }
 
-      expect(statusToString(TaskStatus.ongoing), 'ongoing');
-      expect(statusToString(TaskStatus.completed), 'completed');
-      expect(statusToString(TaskStatus.missed), 'missed');
+      // Map string priority dari Supabase ke enum (same logic as loadTasks)
+      TaskPriority priority;
+      switch (json['priority']) {
+        case 'low':
+          priority = TaskPriority.low;
+          break;
+        case 'medium':
+          priority = TaskPriority.medium;
+          break;
+        case 'high':
+          priority = TaskPriority.high;
+          break;
+        default:
+          priority = TaskPriority.medium;
+      }
+
+      // Parse date dari Supabase (format: YYYY-MM-DD)
+      DateTime deadline;
+      if (json['due_date'] != null) {
+        deadline = DateTime.parse(json['due_date']);
+      } else {
+        deadline = DateTime.now().add(const Duration(days: 1));
+      }
+
+      DateTime? startDate;
+      if (json['start_date'] != null) {
+        startDate = DateTime.parse(json['start_date']);
+      }
+
+      return Task(
+        id: json['id'],
+        title: json['title'],
+        description: json['description'] ?? '',
+        startDate: startDate,
+        deadline: deadline,
+        status: status,
+        priority: priority,
+        createdAt: DateTime.parse(json['created_at']),
+        completedAt: null,
+        steps: json['steps'] != null && json['steps'] is List
+            ? List<Map<String, dynamic>>.from((json['steps'] as List).map((x) => x is Map ? Map<String, dynamic>.from(x) : {'step': x.toString(), 'estimatedMinutes': 10}))
+            : null,
+      );
+    }
+
+    test('should map "ongoing" string to TaskStatus.ongoing', () {
+      final json = {
+        'id': 'test-1',
+        'title': 'Test Task',
+        'description': 'Test',
+        'status': 'ongoing',
+        'priority': 'medium',
+        'due_date': '2024-12-31',
+        'created_at': '2024-01-01T00:00:00Z',
+      };
+
+      final task = taskFromSupabaseJson(json);
+      expect(task.status, TaskStatus.ongoing);
     });
 
-    test('should map string to status correctly', () {
-      TaskStatus stringToStatus(String status) {
-        switch (status) {
-          case 'ongoing':
-            return TaskStatus.ongoing;
-          case 'completed':
-            return TaskStatus.completed;
-          case 'missed':
-            return TaskStatus.missed;
-          default:
-            return TaskStatus.ongoing;
-        }
-      }
+    test('should map "completed" string to TaskStatus.completed', () {
+      final json = {
+        'id': 'test-2',
+        'title': 'Test Task',
+        'description': 'Test',
+        'status': 'completed',
+        'priority': 'medium',
+        'due_date': '2024-12-31',
+        'created_at': '2024-01-01T00:00:00Z',
+      };
 
-      expect(stringToStatus('ongoing'), TaskStatus.ongoing);
-      expect(stringToStatus('completed'), TaskStatus.completed);
-      expect(stringToStatus('missed'), TaskStatus.missed);
-      expect(stringToStatus('unknown'), TaskStatus.ongoing); // Default
-    });
-  });
-
-  group('Priority String Mapping', () {
-    test('should map priority to string correctly', () {
-      String priorityToString(TaskPriority priority) {
-        switch (priority) {
-          case TaskPriority.low:
-            return 'low';
-          case TaskPriority.medium:
-            return 'medium';
-          case TaskPriority.high:
-            return 'high';
-        }
-      }
-
-      expect(priorityToString(TaskPriority.low), 'low');
-      expect(priorityToString(TaskPriority.medium), 'medium');
-      expect(priorityToString(TaskPriority.high), 'high');
+      final task = taskFromSupabaseJson(json);
+      expect(task.status, TaskStatus.completed);
     });
 
-    test('should map string to priority correctly', () {
-      TaskPriority stringToPriority(String priority) {
-        switch (priority) {
-          case 'low':
-            return TaskPriority.low;
-          case 'medium':
-            return TaskPriority.medium;
-          case 'high':
-            return TaskPriority.high;
-          default:
-            return TaskPriority.medium;
-        }
-      }
+    test('should map "missed" string to TaskStatus.missed', () {
+      final json = {
+        'id': 'test-3',
+        'title': 'Test Task',
+        'description': 'Test',
+        'status': 'missed',
+        'priority': 'medium',
+        'due_date': '2024-12-31',
+        'created_at': '2024-01-01T00:00:00Z',
+      };
 
-      expect(stringToPriority('low'), TaskPriority.low);
-      expect(stringToPriority('medium'), TaskPriority.medium);
-      expect(stringToPriority('high'), TaskPriority.high);
-      expect(stringToPriority('unknown'), TaskPriority.medium); // Default
+      final task = taskFromSupabaseJson(json);
+      expect(task.status, TaskStatus.missed);
+    });
+
+    test('should default to TaskStatus.ongoing for unknown status string', () {
+      final json = {
+        'id': 'test-4',
+        'title': 'Test Task',
+        'description': 'Test',
+        'status': 'unknown_status',
+        'priority': 'medium',
+        'due_date': '2024-12-31',
+        'created_at': '2024-01-01T00:00:00Z',
+      };
+
+      final task = taskFromSupabaseJson(json);
+      expect(task.status, TaskStatus.ongoing);
+    });
+
+    test('should map "low" string to TaskPriority.low', () {
+      final json = {
+        'id': 'test-5',
+        'title': 'Test Task',
+        'description': 'Test',
+        'status': 'ongoing',
+        'priority': 'low',
+        'due_date': '2024-12-31',
+        'created_at': '2024-01-01T00:00:00Z',
+      };
+
+      final task = taskFromSupabaseJson(json);
+      expect(task.priority, TaskPriority.low);
+    });
+
+    test('should map "medium" string to TaskPriority.medium', () {
+      final json = {
+        'id': 'test-6',
+        'title': 'Test Task',
+        'description': 'Test',
+        'status': 'ongoing',
+        'priority': 'medium',
+        'due_date': '2024-12-31',
+        'created_at': '2024-01-01T00:00:00Z',
+      };
+
+      final task = taskFromSupabaseJson(json);
+      expect(task.priority, TaskPriority.medium);
+    });
+
+    test('should map "high" string to TaskPriority.high', () {
+      final json = {
+        'id': 'test-7',
+        'title': 'Test Task',
+        'description': 'Test',
+        'status': 'ongoing',
+        'priority': 'high',
+        'due_date': '2024-12-31',
+        'created_at': '2024-01-01T00:00:00Z',
+      };
+
+      final task = taskFromSupabaseJson(json);
+      expect(task.priority, TaskPriority.high);
+    });
+
+    test('should default to TaskPriority.medium for unknown priority string', () {
+      final json = {
+        'id': 'test-8',
+        'title': 'Test Task',
+        'description': 'Test',
+        'status': 'ongoing',
+        'priority': 'unknown_priority',
+        'due_date': '2024-12-31',
+        'created_at': '2024-01-01T00:00:00Z',
+      };
+
+      final task = taskFromSupabaseJson(json);
+      expect(task.priority, TaskPriority.medium);
+    });
+
+    test('should correctly map all status and priority combinations', () {
+      final testCases = [
+        {'status': 'ongoing', 'priority': 'low', 'expectedStatus': TaskStatus.ongoing, 'expectedPriority': TaskPriority.low},
+        {'status': 'ongoing', 'priority': 'medium', 'expectedStatus': TaskStatus.ongoing, 'expectedPriority': TaskPriority.medium},
+        {'status': 'ongoing', 'priority': 'high', 'expectedStatus': TaskStatus.ongoing, 'expectedPriority': TaskPriority.high},
+        {'status': 'completed', 'priority': 'low', 'expectedStatus': TaskStatus.completed, 'expectedPriority': TaskPriority.low},
+        {'status': 'completed', 'priority': 'high', 'expectedStatus': TaskStatus.completed, 'expectedPriority': TaskPriority.high},
+        {'status': 'missed', 'priority': 'medium', 'expectedStatus': TaskStatus.missed, 'expectedPriority': TaskPriority.medium},
+      ];
+
+      for (var i = 0; i < testCases.length; i++) {
+        final testCase = testCases[i];
+        final json = {
+          'id': 'test-$i',
+          'title': 'Test Task',
+          'description': 'Test',
+          'status': testCase['status'],
+          'priority': testCase['priority'],
+          'due_date': '2024-12-31',
+          'created_at': '2024-01-01T00:00:00Z',
+        };
+
+        final task = taskFromSupabaseJson(json);
+        expect(task.status, testCase['expectedStatus'], reason: 'Status mapping failed for ${testCase['status']}');
+        expect(task.priority, testCase['expectedPriority'], reason: 'Priority mapping failed for ${testCase['priority']}');
+      }
+    });
+
+    test('should work correctly with TaskProvider when tasks are created from Supabase JSON', () {
+      final provider = TaskProvider();
+      final now = DateTime.now();
+
+      // Simulate JSON responses from Supabase (as loadTasks would receive them)
+      final jsonTasks = [
+        {
+          'id': 'task-1',
+          'title': 'Ongoing High Priority',
+          'description': 'Test',
+          'status': 'ongoing',
+          'priority': 'high',
+          'due_date': now.add(const Duration(days: 1)).toIso8601String().split('T')[0],
+          'created_at': now.toIso8601String(),
+        },
+        {
+          'id': 'task-2',
+          'title': 'Completed Low Priority',
+          'description': 'Test',
+          'status': 'completed',
+          'priority': 'low',
+          'due_date': now.toIso8601String().split('T')[0],
+          'created_at': now.toIso8601String(),
+        },
+        {
+          'id': 'task-3',
+          'title': 'Missed Medium Priority',
+          'description': 'Test',
+          'status': 'missed',
+          'priority': 'medium',
+          'due_date': now.subtract(const Duration(days: 1)).toIso8601String().split('T')[0],
+          'created_at': now.toIso8601String(),
+        },
+      ];
+
+      // Convert JSON to Task objects using the same mapping logic as loadTasks
+      final tasks = jsonTasks.map((json) => taskFromSupabaseJson(json)).toList();
+
+      // Add tasks to provider using test method
+      provider.setTasksForTesting(tasks);
+
+      // Verify the provider correctly handles the mapped tasks
+      expect(provider.ongoingTasks.length, 1);
+      expect(provider.ongoingTasks[0].status, TaskStatus.ongoing);
+      expect(provider.ongoingTasks[0].priority, TaskPriority.high);
+      expect(provider.ongoingTasks[0].title, 'Ongoing High Priority');
+
+      expect(provider.completedTasks.length, 1);
+      expect(provider.completedTasks[0].status, TaskStatus.completed);
+      expect(provider.completedTasks[0].priority, TaskPriority.low);
+      expect(provider.completedTasks[0].title, 'Completed Low Priority');
+
+      expect(provider.missedTasks.length, 1);
+      expect(provider.missedTasks[0].status, TaskStatus.missed);
+      expect(provider.missedTasks[0].priority, TaskPriority.medium);
+      expect(provider.missedTasks[0].title, 'Missed Medium Priority');
     });
   });
 }
