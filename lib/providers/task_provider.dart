@@ -19,14 +19,19 @@ class TaskProvider with ChangeNotifier {
   List<Task> get ongoingTasks => allTasks.where((task) => task.status == TaskStatus.ongoing).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
   List<Task> get completedTasks => allTasks.where((task) => task.status == TaskStatus.completed).toList()..sort((a, b) => (b.completedAt ?? b.createdAt).compareTo(a.completedAt ?? a.createdAt));
   List<Task> get missedTasks => allTasks.where((task) => task.status == TaskStatus.missed).toList()..sort((a, b) => a.deadline.compareTo(b.deadline));
-  
+
   // Clear all tasks (for logout)
   void clearTasks() {
     _tasks = [];
     notifyListeners();
-    print('✅ Tasks cleared');
   }
-  
+
+  @visibleForTesting
+  void setTasksForTesting(List<Task> tasks) {
+    _tasks = tasks;
+    notifyListeners();
+  }
+
   // Add task
   Future<Task> addTask(Task task) async {
     try {
@@ -97,7 +102,7 @@ class TaskProvider with ChangeNotifier {
       _tasks.add(newTask);
       _isLoading = false;
       notifyListeners();
-      
+
       return newTask;
     } catch (e) {
       _isLoading = false;
@@ -245,12 +250,7 @@ class TaskProvider with ChangeNotifier {
         throw Exception('User not logged in');
       }
 
-      print('🔍 DEBUG: Loading tasks for user: ${currentUser.id}');
-      print('🔍 DEBUG: User email: ${currentUser.email}');
-
       final response = await supabase.from('notes').select().eq('user_id', currentUser.id).order('created_at', ascending: false);
-      
-      print('🔍 DEBUG: Loaded ${(response as List).length} tasks');
 
       _tasks = (response as List).map((json) {
         // Map string status dari Supabase ke enum
@@ -331,13 +331,14 @@ class TaskProvider with ChangeNotifier {
       return null;
     }
   }
+
   // Get weekly statistics
   WeeklyStats getWeeklyStats() {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final startOfWeek = today.subtract(Duration(days: now.weekday - 1));
     final endOfWeek = startOfWeek.add(const Duration(days: 7));
-    
+
     final startOfPreviousWeek = startOfWeek.subtract(const Duration(days: 7));
     final endOfPreviousWeek = startOfWeek;
 
@@ -351,14 +352,14 @@ class TaskProvider with ChangeNotifier {
       if (task.status != TaskStatus.completed) continue;
 
       final createdAt = task.createdAt;
-      
+
       // Check if task is in current week
       if (createdAt.compareTo(startOfWeek) >= 0 && createdAt.isBefore(endOfWeek)) {
         final dayIndex = createdAt.weekday - 1;
         dailyCounts[dayIndex]++;
         currentWeekTotal++;
       }
-      
+
       // Check if task is in previous week
       if (createdAt.compareTo(startOfPreviousWeek) >= 0 && createdAt.isBefore(endOfPreviousWeek)) {
         previousWeekTotal++;

@@ -309,8 +309,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
       if (!mounted) return;
 
-      print('✅ Sign in successful, loading user data...');
-
       // Load user data before navigating
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
       final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
@@ -320,9 +318,8 @@ class _SignInScreenState extends State<SignInScreen> {
           taskProvider.loadTasks(),
           profileProvider.loadProfile(),
         ]);
-        print('✅ User data loaded after sign in');
       } catch (e) {
-        print('⚠️ Warning: Could not load data after sign in: $e');
+        print('Warning: Could not load data after sign in: $e');
       }
 
       if (!mounted) return;

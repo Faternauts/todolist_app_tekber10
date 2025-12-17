@@ -24,7 +24,6 @@ void main() async {
         url: SupabaseConfig.supabaseUrl,
         anonKey: SupabaseConfig.supabaseAnonKey,
       );
-      print('✅ Supabase initialized');
 
       final taskProvider = TaskProvider();
       final profileProvider = ProfileProvider();
@@ -33,12 +32,9 @@ void main() async {
       // Load theme first (doesn't require auth)
       try {
         await themeProvider.loadTheme();
-        print('✅ Theme loaded');
       } catch (e) {
-        print('⚠️ Warning: Could not load theme: $e');
+        print('Warning: Could not load theme: $e');
       }
-
-      print('🚀 Starting app...');
 
       runApp(
         MultiProvider(
@@ -51,10 +47,8 @@ void main() async {
         ),
       );
 
-      print('✅ App started successfully');
     },
     (error, stack) {
-      print('❌ Fatal error: $error');
       print('Stack trace: $stack');
     },
   );
@@ -103,9 +97,7 @@ class _AuthCheckState extends State<AuthCheck> {
     final session = Supabase.instance.client.auth.currentSession;
     
     if (session != null) {
-      // User is logged in, load data
-      print('✅ User is logged in: ${session.user.email}');
-      
+      // User is logged in, load data      
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
       final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
       
@@ -114,9 +106,8 @@ class _AuthCheckState extends State<AuthCheck> {
           taskProvider.loadTasks(),
           profileProvider.loadProfile(),
         ]);
-        print('✅ Data loaded successfully');
       } catch (e) {
-        print('⚠️ Warning: Could not load data: $e');
+        print(' Warning: Could not load data: $e');
       }
       
       // Navigate to home
@@ -126,9 +117,6 @@ class _AuthCheckState extends State<AuthCheck> {
         );
       }
     } else {
-      // User is not logged in
-      print('⚠️ User is not logged in');
-      
       // Always go to onboarding if not logged in
       if (mounted) {
         Navigator.of(context).pushReplacement(

@@ -13,7 +13,6 @@ class ProfileProvider with ChangeNotifier {
   void clearProfile() {
     _profile = UserProfile(name: 'User');
     notifyListeners();
-    print('✅ Profile cleared');
   }
 
   // Load profile from Supabase
@@ -27,8 +26,6 @@ class ProfileProvider with ChangeNotifier {
         throw Exception('User not logged in');
       }
 
-      print('🔍 DEBUG: Loading profile for user: ${currentUser.id}');
-
       final response = await supabase
           .from('profiles')
           .select()
@@ -41,10 +38,8 @@ class ProfileProvider with ChangeNotifier {
           photoPath: response['photo_url'],
           age: response['age'],
         );
-        print('✅ Profile loaded: ${_profile.name}');
       } else {
         // Profile tidak ada, buat yang baru
-        print('⚠️ Profile not found, creating new profile');
         await _createProfile();
       }
 
@@ -53,7 +48,6 @@ class ProfileProvider with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      print('❌ Error loading profile: $e');
       // Tidak throw error supaya app tetap jalan
     }
   }
@@ -74,9 +68,8 @@ class ProfileProvider with ChangeNotifier {
       });
 
       _profile = UserProfile(name: username);
-      print('✅ Profile created for: $username');
     } catch (e) {
-      print('❌ Error creating profile: $e');
+      print('Error creating profile: $e');
     }
   }
 
@@ -102,9 +95,8 @@ class ProfileProvider with ChangeNotifier {
       });
 
       notifyListeners();
-      print('✅ Profile updated');
     } catch (e) {
-      print('❌ Error updating profile: $e');
+      print('Error updating profile: $e');
       rethrow;
     }
   }

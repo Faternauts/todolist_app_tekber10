@@ -12,7 +12,6 @@ class DebugWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('🎨 Rendering: $screenName');
     return child;
   }
 }
