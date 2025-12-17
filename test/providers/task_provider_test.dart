@@ -47,7 +47,7 @@ void main() {
     });
   });
 
-  group('Task Filtering Logic', () {
+  group('TaskProvider Filtering and Sorting', () {
     // Helper function to create test tasks
     Task createTestTask({
       required String id,
@@ -56,6 +56,7 @@ void main() {
       required DateTime deadline,
       TaskPriority priority = TaskPriority.medium,
       DateTime? completedAt,
+      DateTime? createdAt,
     }) {
       return Task(
         id: id,
@@ -64,81 +65,100 @@ void main() {
         deadline: deadline,
         status: status,
         priority: priority,
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        createdAt: createdAt ?? DateTime.now().subtract(const Duration(days: 1)),
         completedAt: completedAt,
       );
     }
 
-    group('Task Status', () {
-      test('ongoing task should have ongoing status', () {
-        final task = createTestTask(
-          id: '1',
-          title: 'Ongoing Task',
-          status: TaskStatus.ongoing,
-          deadline: DateTime.now().add(const Duration(days: 7)),
-        );
+    group('ongoingTasks getter', () {
+      test('should filter and return only ongoing tasks', () {
+        final provider = TaskProvider();
+        final now = DateTime.now();
 
-        expect(task.status, TaskStatus.ongoing);
+        provider.setTasksForTesting([
+          createTestTask(id: '1', title: 'Ongoing 1', status: TaskStatus.ongoing, deadline: now.add(const Duration(days: 1))),
+          createTestTask(id: '2', title: 'Completed', status: TaskStatus.completed, deadline: now),
+          createTestTask(id: '3', title: 'Ongoing 2', status: TaskStatus.ongoing, deadline: now.add(const Duration(days: 2))),
+          createTestTask(id: '4', title: 'Missed', status: TaskStatus.missed, deadline: now.subtract(const Duration(days: 1))),
+        ]);
+
+        final ongoingTasks = provider.ongoingTasks;
+
+        expect(ongoingTasks.length, 2);
+        expect(ongoingTasks.every((t) => t.status == TaskStatus.ongoing), true);
+        expect(ongoingTasks.map((t) => t.title).toList(), containsAll(['Ongoing 1', 'Ongoing 2']));
       });
 
-      test('completed task should have completed status', () {
-        final task = createTestTask(
-          id: '2',
-          title: 'Completed Task',
-          status: TaskStatus.completed,
-          deadline: DateTime.now().add(const Duration(days: 7)),
-          completedAt: DateTime.now(),
-        );
+      test('should sort ongoing tasks by deadline ascending', () {
+        final provider = TaskProvider();
+        final now = DateTime.now();
 
-        expect(task.status, TaskStatus.completed);
-      });
-
-      test('missed task should have missed status', () {
-        final task = createTestTask(
-          id: '3',
-          title: 'Missed Task',
-          status: TaskStatus.missed,
-          deadline: DateTime.now().subtract(const Duration(days: 1)),
-        );
-
-        expect(task.status, TaskStatus.missed);
-      });
-    });
-
-    group('Task Sorting', () {
-      test('ongoing tasks should be sortable by deadline', () {
-        final tasks = [
+        provider.setTasksForTesting([
           createTestTask(
             id: '1',
             title: 'Later Task',
             status: TaskStatus.ongoing,
-            deadline: DateTime.now().add(const Duration(days: 7)),
+            deadline: now.add(const Duration(days: 7)),
           ),
           createTestTask(
             id: '2',
             title: 'Sooner Task',
             status: TaskStatus.ongoing,
-            deadline: DateTime.now().add(const Duration(days: 1)),
+            deadline: now.add(const Duration(days: 1)),
           ),
           createTestTask(
             id: '3',
             title: 'Middle Task',
             status: TaskStatus.ongoing,
-            deadline: DateTime.now().add(const Duration(days: 3)),
+            deadline: now.add(const Duration(days: 3)),
           ),
-        ];
+        ]);
 
-        // Sort by deadline ascending (soonest first)
-        tasks.sort((a, b) => a.deadline.compareTo(b.deadline));
+        final ongoingTasks = provider.ongoingTasks;
 
-        expect(tasks[0].title, 'Sooner Task');
-        expect(tasks[1].title, 'Middle Task');
-        expect(tasks[2].title, 'Later Task');
+        expect(ongoingTasks.length, 3);
+        expect(ongoingTasks[0].title, 'Sooner Task');
+        expect(ongoingTasks[1].title, 'Middle Task');
+        expect(ongoingTasks[2].title, 'Later Task');
       });
 
-      test('completed tasks should be sortable by completedAt', () {
+      test('should return empty list when no ongoing tasks', () {
+        final provider = TaskProvider();
         final now = DateTime.now();
-        final tasks = [
+
+        provider.setTasksForTesting([
+          createTestTask(id: '1', title: 'Completed', status: TaskStatus.completed, deadline: now),
+          createTestTask(id: '2', title: 'Missed', status: TaskStatus.missed, deadline: now.subtract(const Duration(days: 1))),
+        ]);
+
+        expect(provider.ongoingTasks, isEmpty);
+      });
+    });
+
+    group('completedTasks getter', () {
+      test('should filter and return only completed tasks', () {
+        final provider = TaskProvider();
+        final now = DateTime.now();
+
+        provider.setTasksForTesting([
+          createTestTask(id: '1', title: 'Ongoing', status: TaskStatus.ongoing, deadline: now.add(const Duration(days: 1))),
+          createTestTask(id: '2', title: 'Completed 1', status: TaskStatus.completed, deadline: now, completedAt: now),
+          createTestTask(id: '3', title: 'Completed 2', status: TaskStatus.completed, deadline: now, completedAt: now),
+          createTestTask(id: '4', title: 'Missed', status: TaskStatus.missed, deadline: now.subtract(const Duration(days: 1))),
+        ]);
+
+        final completedTasks = provider.completedTasks;
+
+        expect(completedTasks.length, 2);
+        expect(completedTasks.every((t) => t.status == TaskStatus.completed), true);
+        expect(completedTasks.map((t) => t.title).toList(), containsAll(['Completed 1', 'Completed 2']));
+      });
+
+      test('should sort completed tasks by completedAt descending (most recent first)', () {
+        final provider = TaskProvider();
+        final now = DateTime.now();
+
+        provider.setTasksForTesting([
           createTestTask(
             id: '1',
             title: 'Completed First',
@@ -160,141 +180,159 @@ void main() {
             deadline: now,
             completedAt: now.subtract(const Duration(days: 1)),
           ),
-        ];
+        ]);
 
-        // Sort by completedAt descending (most recent first)
-        tasks.sort((a, b) => (b.completedAt ?? b.createdAt).compareTo(a.completedAt ?? a.createdAt));
+        final completedTasks = provider.completedTasks;
 
-        expect(tasks[0].title, 'Completed Last');
-        expect(tasks[1].title, 'Completed Middle');
-        expect(tasks[2].title, 'Completed First');
+        expect(completedTasks.length, 3);
+        expect(completedTasks[0].title, 'Completed Last');
+        expect(completedTasks[1].title, 'Completed Middle');
+        expect(completedTasks[2].title, 'Completed First');
+      });
+
+      test('should use createdAt when completedAt is null', () {
+        final provider = TaskProvider();
+        final now = DateTime.now();
+        final earlier = now.subtract(const Duration(days: 3));
+        final later = now.subtract(const Duration(days: 1));
+
+        provider.setTasksForTesting([
+          createTestTask(
+            id: '1',
+            title: 'Earlier Task',
+            status: TaskStatus.completed,
+            deadline: now,
+            completedAt: null,
+            createdAt: earlier,
+          ),
+          createTestTask(
+            id: '2',
+            title: 'Later Task',
+            status: TaskStatus.completed,
+            deadline: now,
+            completedAt: null,
+            createdAt: later,
+          ),
+        ]);
+
+        final completedTasks = provider.completedTasks;
+
+        expect(completedTasks.length, 2);
+        expect(completedTasks[0].title, 'Later Task');
+        expect(completedTasks[1].title, 'Earlier Task');
       });
     });
 
-    group('Task Filtering', () {
-      test('should filter ongoing tasks correctly', () {
-        final tasks = [
-          createTestTask(id: '1', title: 'Ongoing 1', status: TaskStatus.ongoing, deadline: DateTime.now().add(const Duration(days: 1))),
-          createTestTask(id: '2', title: 'Completed', status: TaskStatus.completed, deadline: DateTime.now()),
-          createTestTask(id: '3', title: 'Ongoing 2', status: TaskStatus.ongoing, deadline: DateTime.now().add(const Duration(days: 2))),
-          createTestTask(id: '4', title: 'Missed', status: TaskStatus.missed, deadline: DateTime.now().subtract(const Duration(days: 1))),
-        ];
+    group('missedTasks getter', () {
+      test('should filter and return only missed tasks', () {
+        final provider = TaskProvider();
+        final now = DateTime.now();
 
-        final ongoingTasks = tasks.where((t) => t.status == TaskStatus.ongoing).toList();
+        provider.setTasksForTesting([
+          createTestTask(id: '1', title: 'Ongoing', status: TaskStatus.ongoing, deadline: now.add(const Duration(days: 1))),
+          createTestTask(id: '2', title: 'Completed', status: TaskStatus.completed, deadline: now),
+          createTestTask(id: '3', title: 'Missed 1', status: TaskStatus.missed, deadline: now.subtract(const Duration(days: 1))),
+          createTestTask(id: '4', title: 'Missed 2', status: TaskStatus.missed, deadline: now.subtract(const Duration(days: 2))),
+        ]);
 
-        expect(ongoingTasks.length, 2);
-        expect(ongoingTasks.every((t) => t.status == TaskStatus.ongoing), true);
-      });
-
-      test('should filter completed tasks correctly', () {
-        final tasks = [
-          createTestTask(id: '1', title: 'Ongoing', status: TaskStatus.ongoing, deadline: DateTime.now().add(const Duration(days: 1))),
-          createTestTask(id: '2', title: 'Completed 1', status: TaskStatus.completed, deadline: DateTime.now()),
-          createTestTask(id: '3', title: 'Completed 2', status: TaskStatus.completed, deadline: DateTime.now()),
-          createTestTask(id: '4', title: 'Missed', status: TaskStatus.missed, deadline: DateTime.now().subtract(const Duration(days: 1))),
-        ];
-
-        final completedTasks = tasks.where((t) => t.status == TaskStatus.completed).toList();
-
-        expect(completedTasks.length, 2);
-        expect(completedTasks.every((t) => t.status == TaskStatus.completed), true);
-      });
-
-      test('should filter missed tasks correctly', () {
-        final tasks = [
-          createTestTask(id: '1', title: 'Ongoing', status: TaskStatus.ongoing, deadline: DateTime.now().add(const Duration(days: 1))),
-          createTestTask(id: '2', title: 'Completed', status: TaskStatus.completed, deadline: DateTime.now()),
-          createTestTask(id: '3', title: 'Missed 1', status: TaskStatus.missed, deadline: DateTime.now().subtract(const Duration(days: 1))),
-          createTestTask(id: '4', title: 'Missed 2', status: TaskStatus.missed, deadline: DateTime.now().subtract(const Duration(days: 2))),
-        ];
-
-        final missedTasks = tasks.where((t) => t.status == TaskStatus.missed).toList();
+        final missedTasks = provider.missedTasks;
 
         expect(missedTasks.length, 2);
         expect(missedTasks.every((t) => t.status == TaskStatus.missed), true);
+        expect(missedTasks.map((t) => t.title).toList(), containsAll(['Missed 1', 'Missed 2']));
+      });
+
+      test('should sort missed tasks by deadline ascending', () {
+        final provider = TaskProvider();
+        final now = DateTime.now();
+
+        provider.setTasksForTesting([
+          createTestTask(
+            id: '1',
+            title: 'Later Missed',
+            status: TaskStatus.missed,
+            deadline: now.subtract(const Duration(days: 1)),
+          ),
+          createTestTask(
+            id: '2',
+            title: 'Earlier Missed',
+            status: TaskStatus.missed,
+            deadline: now.subtract(const Duration(days: 3)),
+          ),
+          createTestTask(
+            id: '3',
+            title: 'Middle Missed',
+            status: TaskStatus.missed,
+            deadline: now.subtract(const Duration(days: 2)),
+          ),
+        ]);
+
+        final missedTasks = provider.missedTasks;
+
+        expect(missedTasks.length, 3);
+        expect(missedTasks[0].title, 'Earlier Missed');
+        expect(missedTasks[1].title, 'Middle Missed');
+        expect(missedTasks[2].title, 'Later Missed');
       });
     });
 
-    group('Task Priority', () {
-      test('should correctly identify high priority tasks', () {
-        final task = createTestTask(
-          id: '1',
-          title: 'High Priority',
-          status: TaskStatus.ongoing,
-          deadline: DateTime.now().add(const Duration(days: 1)),
-          priority: TaskPriority.high,
-        );
-
-        expect(task.priority, TaskPriority.high);
-      });
-
-      test('should correctly identify medium priority tasks', () {
-        final task = createTestTask(
-          id: '2',
-          title: 'Medium Priority',
-          status: TaskStatus.ongoing,
-          deadline: DateTime.now().add(const Duration(days: 1)),
-          priority: TaskPriority.medium,
-        );
-
-        expect(task.priority, TaskPriority.medium);
-      });
-
-      test('should correctly identify low priority tasks', () {
-        final task = createTestTask(
-          id: '3',
-          title: 'Low Priority',
-          status: TaskStatus.ongoing,
-          deadline: DateTime.now().add(const Duration(days: 1)),
-          priority: TaskPriority.low,
-        );
-
-        expect(task.priority, TaskPriority.low);
-      });
-
-      test('should filter tasks by priority', () {
-        final tasks = [
-          createTestTask(id: '1', title: 'High', status: TaskStatus.ongoing, deadline: DateTime.now(), priority: TaskPriority.high),
-          createTestTask(id: '2', title: 'Medium', status: TaskStatus.ongoing, deadline: DateTime.now(), priority: TaskPriority.medium),
-          createTestTask(id: '3', title: 'Low', status: TaskStatus.ongoing, deadline: DateTime.now(), priority: TaskPriority.low),
-          createTestTask(id: '4', title: 'High 2', status: TaskStatus.ongoing, deadline: DateTime.now(), priority: TaskPriority.high),
-        ];
-
-        final highPriorityTasks = tasks.where((t) => t.priority == TaskPriority.high).toList();
-
-        expect(highPriorityTasks.length, 2);
-      });
-    });
-
-    group('Find Task by ID', () {
+    group('getTaskById method', () {
       test('should find existing task by id', () {
-        final tasks = [
-          createTestTask(id: 'abc-123', title: 'Task A', status: TaskStatus.ongoing, deadline: DateTime.now()),
-          createTestTask(id: 'def-456', title: 'Task B', status: TaskStatus.ongoing, deadline: DateTime.now()),
-          createTestTask(id: 'ghi-789', title: 'Task C', status: TaskStatus.ongoing, deadline: DateTime.now()),
-        ];
+        final provider = TaskProvider();
+        final now = DateTime.now();
 
-        final found = tasks.firstWhere(
-          (t) => t.id == 'def-456',
-          orElse: () => throw Exception('Not found'),
-        );
+        provider.setTasksForTesting([
+          createTestTask(id: 'abc-123', title: 'Task A', status: TaskStatus.ongoing, deadline: now),
+          createTestTask(id: 'def-456', title: 'Task B', status: TaskStatus.ongoing, deadline: now),
+          createTestTask(id: 'ghi-789', title: 'Task C', status: TaskStatus.ongoing, deadline: now),
+        ]);
 
-        expect(found.title, 'Task B');
+        final found = provider.getTaskById('def-456');
+
+        expect(found, isNotNull);
+        expect(found!.title, 'Task B');
       });
 
       test('should return null for non-existing task id', () {
-        final tasks = [
-          createTestTask(id: 'abc-123', title: 'Task A', status: TaskStatus.ongoing, deadline: DateTime.now()),
-        ];
+        final provider = TaskProvider();
+        final now = DateTime.now();
 
-        Task? found;
-        try {
-          found = tasks.firstWhere((t) => t.id == 'non-existing');
-        } catch (e) {
-          found = null;
-        }
+        provider.setTasksForTesting([
+          createTestTask(id: 'abc-123', title: 'Task A', status: TaskStatus.ongoing, deadline: now),
+        ]);
+
+        final found = provider.getTaskById('non-existing');
 
         expect(found, isNull);
+      });
+
+      test('should return null when task list is empty', () {
+        final provider = TaskProvider();
+
+        final found = provider.getTaskById('any-id');
+
+        expect(found, isNull);
+      });
+    });
+
+    group('Task Priority filtering', () {
+      test('should include tasks with different priorities in filtered results', () {
+        final provider = TaskProvider();
+        final now = DateTime.now();
+
+        provider.setTasksForTesting([
+          createTestTask(id: '1', title: 'High', status: TaskStatus.ongoing, deadline: now.add(const Duration(days: 1)), priority: TaskPriority.high),
+          createTestTask(id: '2', title: 'Medium', status: TaskStatus.ongoing, deadline: now.add(const Duration(days: 1)), priority: TaskPriority.medium),
+          createTestTask(id: '3', title: 'Low', status: TaskStatus.ongoing, deadline: now.add(const Duration(days: 1)), priority: TaskPriority.low),
+          createTestTask(id: '4', title: 'High 2', status: TaskStatus.ongoing, deadline: now.add(const Duration(days: 1)), priority: TaskPriority.high),
+        ]);
+
+        final ongoingTasks = provider.ongoingTasks;
+        final highPriorityTasks = ongoingTasks.where((t) => t.priority == TaskPriority.high).toList();
+
+        expect(ongoingTasks.length, 4);
+        expect(highPriorityTasks.length, 2);
+        expect(highPriorityTasks.map((t) => t.title).toList(), containsAll(['High', 'High 2']));
       });
     });
   });
@@ -377,4 +415,3 @@ void main() {
     });
   });
 }
-

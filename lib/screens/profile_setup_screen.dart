@@ -91,14 +91,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         await supabase.storage.from('avatars').upload(
           fileName,
           _selectedImage!,
-          fileOptions: FileOptions(
+          fileOptions: const FileOptions(
             cacheControl: '3600',
             upsert: true,
           ),
         );
 
         photoUrl = supabase.storage.from('avatars').getPublicUrl(fileName);
-        print('✅ Avatar uploaded: $photoUrl');
       }
 
       // Create profile in Supabase
@@ -109,21 +108,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         'photo_url': photoUrl,
       });
 
-      print('✅ Profile created for: $username');
-
       // Load user data
       if (mounted) {
         final taskProvider = Provider.of<TaskProvider>(context, listen: false);
         final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-        
         try {
           await Future.wait([
             taskProvider.loadTasks(),
             profileProvider.loadProfile(),
           ]);
-          print('✅ User data loaded after profile setup');
         } catch (e) {
-          print('⚠️ Warning: Could not load data: $e');
+          print(' Warning: Could not load data: $e');
         }
       }
 
