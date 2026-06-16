@@ -1,0 +1,131 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to rollback"
+        required: true
+        type: choice
+        options: [dev, production]
+      release_timestamp:
+        description: "Release timestamp to restore (format: YYYYMMDDHHMMSS). Leave blank to list available releases."
+        required: false
+        type: string
+
+jobs:
+  list-releases:
+    name: List available releases
+    runs-on: ubuntu-latest
+    if: ${{ inputs.release_timestamp == '' }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: List releases for ${{ inputs.environment }}
+        run: |
+          BUCKET=${{ inputs.environment == 'production' && secrets.GCP_PROD_BUCKET || secrets.GCP_DEV_BUCKET }}
+          echo "Available releases in ${BUCKET}:"
+          gsutil ls "gs://${BUCKET}/releases/" 2>/dev/null \
+            | grep -oP '\d{14}' \
+            | sort -r \
+            | head -20 \
+            || echo "No releases found."
+          echo ""
+          echo "To rollback, re-run this workflow with the desired timestamp as 'release_timestamp'."
+
+  rollback:
+    name: Restore release to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    if: ${{ inputs.release_timestamp != '' }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Validate timestamp format
+        run: |
+          if ! [[ "${{ inputs.release_timestamp }}" =~ ^[0-9]{14}$ ]]; then
+            echo "Invalid timestamp format. Expected YYYYMMDDHHMMSS (14 digits)."
+            exit 1
+          fi
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Verify release exists
+        run: |
+          BUCKET=${{ inputs.environment == 'production' && secrets.GCP_PROD_BUCKET || secrets.GCP_DEV_BUCKET }}
+          if ! gsutil ls "gs://${BUCKET}/releases/${{ inputs.release_timestamp }}/" > /dev/null 2>&1; then
+            echo "Release ${{ inputs.release_timestamp }} not found in ${BUCKET}."
+            exit 1
+          fi
+          echo "BUCKET=${BUCKET}" >> "$GITHUB_ENV"
+
+      - name: Backup current state before rollback
+        run: |
+          SAFETY_TS=$(date +%Y%m%d%H%M%S)
+          gsutil -m rsync -r \
+            gs://${{ env.BUCKET }}/current \
+            gs://${{ env.BUCKET }}/pre-rollbacks/${SAFETY_TS} \
+          || echo "Nothing to backup — continuing"
+
+      - name: Restore release ${{ inputs.release_timestamp }}
+        run: |
+          gsutil -m rsync -r -d \
+            gs://${{ env.BUCKET }}/releases/${{ inputs.release_timestamp }} \
+            gs://${{ env.BUCKET }}/current
+          echo "✅ Rollback to ${{ inputs.release_timestamp }} complete."
+
+      - name: Show restored manifest
+        run: |
+          gsutil cat gs://${{ env.BUCKET }}/releases/${{ inputs.release_timestamp }}/manifest.json \
+          || echo "No manifest found for this release."
+
+      - name: Get actor email
+        id: actor
+        uses: actions/github-script@v7
+        env:
+          NOTIFY_EMAILS: ${{ secrets.NOTIFY_EMAILS }}
+        with:
+          script: |
+            const { data: user } = await github.rest.users.getByUsername({ username: context.actor });
+            const fallback = process.env.NOTIFY_EMAILS;
+            core.setOutput('email', user.email || fallback);
+
+      - name: Send rollback notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          secure: false
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "[${{ inputs.environment }}] Rollback executed — ${{ github.repository }}"
+          to: ${{ steps.actor.outputs.email }}
+          from: "${{ secrets.SMTP_USERNAME }}"
+          body: |
+            A rollback was executed.
+
+            Environment : ${{ inputs.environment }}
+            Restored to : ${{ inputs.release_timestamp }}
+            Triggered by: ${{ github.actor }}
+            Repository  : ${{ github.repository }}
+
+            View run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
