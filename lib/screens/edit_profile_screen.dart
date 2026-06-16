@@ -102,7 +102,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (currentUser != null) {
           final fileName =
               '${currentUser.id}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-          final filePath = '$fileName';
+          final filePath = fileName;
 
           // Delete old avatar if exists
           if (_currentPhotoUrl != null && _currentPhotoUrl!.isNotEmpty) {
@@ -110,7 +110,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               final oldFileName = _currentPhotoUrl!.split('/').last;
               await supabase.storage.from('avatars').remove([oldFileName]);
             } catch (e) {
-              print(' Could not delete old avatar: $e');
+              debugPrint(' Could not delete old avatar: $e');
             }
           }
 
@@ -138,6 +138,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           photoUrl,
         );
 
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Profile berhasil diperbarui!'),
@@ -223,7 +224,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
                       ),
@@ -262,7 +263,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   height: 120,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: Colors.black.withValues(alpha: 0.3),
                                   ),
                                   child: const Icon(
                                     Icons.camera_alt_outlined,
@@ -285,7 +286,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color:
-                                    Theme.of(context).colorScheme.onBackground,
+                                    Theme.of(context).colorScheme.onSurface,
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                             ),
@@ -300,7 +301,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.4),
+                                    .withValues(alpha: 0.4),
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                               filled: true,
@@ -311,7 +312,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .outline
-                                        .withOpacity(0.2)),
+                                        .withValues(alpha: 0.2)),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -319,7 +320,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .outline
-                                        .withOpacity(0.2)),
+                                        .withValues(alpha: 0.2)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -345,7 +346,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color:
-                                    Theme.of(context).colorScheme.onBackground,
+                                    Theme.of(context).colorScheme.onSurface,
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                             ),
@@ -361,7 +362,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.4),
+                                    .withValues(alpha: 0.4),
                                 fontFamily: AppTextStyles.fontFamily,
                               ),
                               filled: true,
@@ -372,7 +373,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .outline
-                                        .withOpacity(0.2)),
+                                        .withValues(alpha: 0.2)),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -380,7 +381,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .outline
-                                        .withOpacity(0.2)),
+                                        .withValues(alpha: 0.2)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -425,7 +426,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 borderRadius: BorderRadius.circular(30),
               ),
               disabledBackgroundColor:
-                  Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
             ),
             child: _isLoading
                 ? SizedBox(

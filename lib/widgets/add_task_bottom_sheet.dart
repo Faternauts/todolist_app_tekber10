@@ -176,7 +176,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius:
-              BorderRadius.vertical(top: Radius.circular(AppRadius.xxl)),
+              const BorderRadius.vertical(top: Radius.circular(AppRadius.xxl)),
         ),
         child: Column(
           children: [
@@ -200,14 +200,14 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                             color: Theme.of(context)
                                 .colorScheme
                                 .outline
-                                .withOpacity(0.2)),
+                                .withValues(alpha: 0.2)),
                       ),
                       child: Icon(Icons.close,
                           size: 18,
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.6)),
+                              .withValues(alpha: 0.6)),
                     ),
                   ),
                 ],
@@ -238,7 +238,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.4)),
+                                .withValues(alpha: 0.4)),
                         filled: true,
                         fillColor:
                             Theme.of(context).brightness == Brightness.dark
@@ -250,7 +250,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                               color: Theme.of(context)
                                   .colorScheme
                                   .outline
-                                  .withOpacity(0.2)),
+                                  .withValues(alpha: 0.2)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -258,7 +258,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                               color: Theme.of(context)
                                   .colorScheme
                                   .outline
-                                  .withOpacity(0.2)),
+                                  .withValues(alpha: 0.2)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -295,7 +295,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.4)),
+                                .withValues(alpha: 0.4)),
                         filled: true,
                         fillColor:
                             Theme.of(context).brightness == Brightness.dark
@@ -307,7 +307,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                               color: Theme.of(context)
                                   .colorScheme
                                   .outline
-                                  .withOpacity(0.2)),
+                                  .withValues(alpha: 0.2)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -315,7 +315,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                               color: Theme.of(context)
                                   .colorScheme
                                   .outline
-                                  .withOpacity(0.2)),
+                                  .withValues(alpha: 0.2)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -360,7 +360,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                                         color: Theme.of(context)
                                             .colorScheme
                                             .outline
-                                            .withOpacity(0.2)),
+                                            .withValues(alpha: 0.2)),
                                   ),
                                   child: Row(
                                     children: [
@@ -379,7 +379,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                                                       : Theme.of(context)
                                                           .colorScheme
                                                           .onSurface
-                                                          .withOpacity(0.4)),
+                                                          .withValues(alpha: 0.4)),
                                         ),
                                       ),
                                       SvgPicture.asset(
@@ -390,7 +390,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                                               Theme.of(context)
                                                   .colorScheme
                                                   .onSurface
-                                                  .withOpacity(0.4),
+                                                  .withValues(alpha: 0.4),
                                               BlendMode.srcIn)),
                                     ],
                                   ),
@@ -428,7 +428,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                                         color: Theme.of(context)
                                             .colorScheme
                                             .outline
-                                            .withOpacity(0.2)),
+                                            .withValues(alpha: 0.2)),
                                   ),
                                   child: Row(
                                     children: [
@@ -447,7 +447,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                                                       : Theme.of(context)
                                                           .colorScheme
                                                           .onSurface
-                                                          .withOpacity(0.4)),
+                                                          .withValues(alpha: 0.4)),
                                         ),
                                       ),
                                       SvgPicture.asset(
@@ -458,7 +458,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                                               Theme.of(context)
                                                   .colorScheme
                                                   .onSurface
-                                                  .withOpacity(0.4),
+                                                  .withValues(alpha: 0.4),
                                               BlendMode.srcIn)),
                                     ],
                                   ),
@@ -514,7 +514,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                                           : Theme.of(context)
                                               .colorScheme
                                               .outline
-                                              .withOpacity(0.2),
+                                              .withValues(alpha: 0.2),
                                       width: isSelected ? 2 : 1),
                                 ),
                                 child: Text(
@@ -528,7 +528,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                                           : Theme.of(context)
                                               .colorScheme
                                               .onSurface
-                                              .withOpacity(0.6)),
+                                              .withValues(alpha: 0.6)),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -553,7 +553,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet>
                         color: Theme.of(context)
                             .colorScheme
                             .outline
-                            .withOpacity(0.2))),
+                            .withValues(alpha: 0.2))),
               ),
               child: SafeArea(
                 child: SizedBox(

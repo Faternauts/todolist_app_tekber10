@@ -66,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
                       ),
@@ -123,7 +123,7 @@ class ProfileScreen extends StatelessWidget {
                                                           FontWeight.bold,
                                                       color: Theme.of(context)
                                                           .colorScheme
-                                                          .onBackground,
+                                                          .onSurface,
                                                       fontFamily: AppTextStyles
                                                           .fontFamily,
                                                     ),
@@ -138,7 +138,7 @@ class ProfileScreen extends StatelessWidget {
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .onSurface
-                                                          .withOpacity(0.6),
+                                                          .withValues(alpha: 0.6),
                                                       fontFamily: AppTextStyles
                                                           .fontFamily,
                                                     ),
@@ -255,7 +255,7 @@ class ProfileScreen extends StatelessWidget {
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .shadow
-                                                  .withOpacity(0.1),
+                                                  .withValues(alpha: 0.1),
                                               blurRadius: 10,
                                               offset: const Offset(0, 4),
                                             ),
@@ -264,7 +264,7 @@ class ProfileScreen extends StatelessWidget {
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .outline
-                                                  .withOpacity(0.1)),
+                                                  .withValues(alpha: 0.1)),
                                         ),
                                         child: Column(
                                           crossAxisAlignment:
@@ -302,7 +302,7 @@ class ProfileScreen extends StatelessWidget {
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: Colors.grey
-                                                            .withOpacity(0.1),
+                                                            .withValues(alpha: 0.1),
                                                         blurRadius: 4,
                                                         offset:
                                                             const Offset(0, 2),
@@ -566,7 +566,7 @@ class _StripedBarPainter extends CustomPainter {
 
     // Draw background with opacity
     final bgPaint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);

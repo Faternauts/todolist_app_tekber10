@@ -6,8 +6,6 @@ import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
 import '../models/task.dart';
 import '../providers/task_provider.dart';
-import 'add_edit_task_screen.dart';
-import '../widgets/add_task_bottom_sheet.dart';
 import '../widgets/edit_task_bottom_sheet.dart';
 
 class FocusModeScreen extends StatefulWidget {
@@ -231,7 +229,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                     Theme.of(context)
                         .colorScheme
                         .primaryContainer
-                        .withOpacity(0.55),
+                        .withValues(alpha: 0.55),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -279,7 +277,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: Colors.black.withValues(alpha: 0.05),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -310,7 +308,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: Colors.black.withValues(alpha: 0.05),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -378,7 +376,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                       color: Theme.of(context)
                                           .colorScheme
                                           .primary
-                                          .withOpacity(0.3),
+                                          .withValues(alpha: 0.3),
                                       blurRadius: 20,
                                       offset: const Offset(0, 8))
                                 ],
@@ -412,7 +410,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                       backgroundColor: Theme.of(context)
                                           .colorScheme
                                           .onPrimary
-                                          .withOpacity(0.2),
+                                          .withValues(alpha: 0.2),
                                       foregroundColor: Theme.of(context)
                                           .colorScheme
                                           .onPrimary,
@@ -450,7 +448,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                         color: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.1),
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppRadius.full)),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -476,7 +474,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                       fontWeight: FontWeight.w500),
                 ),
               ],
@@ -490,7 +488,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                 Divider(
                     height: 1,
                     color:
-                        Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                        Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
                 InkWell(
                   onTap: () {
                     setState(() {
@@ -513,7 +511,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.6),
+                              .withValues(alpha: 0.6),
                         ),
                       ],
                     ),
@@ -522,7 +520,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                 Divider(
                     height: 1,
                     color:
-                        Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+                        Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
                 if (_showDetails) ...[
                   Padding(
                     padding:
@@ -538,14 +536,14 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.6)),
+                                    .withValues(alpha: 0.6)),
                             const SizedBox(width: AppSpacing.md),
                             Text('Due',
                                 style: AppTextStyles.bodySmall.copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurface
-                                        .withOpacity(0.6))),
+                                        .withValues(alpha: 0.6))),
                             const SizedBox(width: AppSpacing.md),
                             Text(
                               _formatDeadline(widget.task.deadline),
@@ -565,21 +563,21 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.6)),
+                                    .withValues(alpha: 0.6)),
                             const SizedBox(width: AppSpacing.md),
                             Text('Priority',
                                 style: AppTextStyles.bodySmall.copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurface
-                                        .withOpacity(0.6))),
+                                        .withValues(alpha: 0.6))),
                             const SizedBox(width: AppSpacing.md),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: AppSpacing.sm,
                                   vertical: AppSpacing.xs),
                               decoration: BoxDecoration(
-                                color: _getPriorityColor().withOpacity(0.1),
+                                color: _getPriorityColor().withValues(alpha: 0.1),
                                 borderRadius:
                                     BorderRadius.circular(AppRadius.full),
                               ),
@@ -602,7 +600,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .outline
-                          .withOpacity(0.2)),
+                          .withValues(alpha: 0.2)),
                 ],
               ],
             ),
@@ -627,7 +625,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                           color: Theme.of(context)
                               .colorScheme
                               .outline
-                              .withOpacity(0.2)),
+                              .withValues(alpha: 0.2)),
                     ),
                     child: Column(
                       children: [
@@ -636,7 +634,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.3)),
+                                .withValues(alpha: 0.3)),
                         const SizedBox(height: AppSpacing.md),
                         Text(
                           'No specific steps for this task.',
@@ -644,7 +642,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.7)),
+                                  .withValues(alpha: 0.7)),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: AppSpacing.sm),
@@ -654,7 +652,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.5)),
+                                  .withValues(alpha: 0.5)),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -686,7 +684,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                           color: Theme.of(context)
                               .colorScheme
                               .outline
-                              .withOpacity(0.2)),
+                              .withValues(alpha: 0.2)),
                       boxShadow: isCompleted ? [] : const [AppShadows.small],
                     ),
                     child: Row(
@@ -704,7 +702,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                     : Theme.of(context)
                                         .colorScheme
                                         .outline
-                                        .withOpacity(0.3),
+                                        .withValues(alpha: 0.3),
                                 width: 2),
                             color: isCompleted
                                 ? Theme.of(context).colorScheme.primary
@@ -762,7 +760,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
           Container(
             padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               border:
                   const Border(top: BorderSide(color: AppColors.borderLight)),
             ),
@@ -834,7 +832,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                             ),
-                                            side: BorderSide(
+                                            side: const BorderSide(
                                                 color: AppColors.borderLight),
                                           ),
                                           child: Text(
@@ -877,11 +875,11 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                             ),
                           ),
                         );
-                        if (confirmed == true && mounted) {
+                        if (confirmed == true && context.mounted) {
                           final taskProvider =
                               Provider.of<TaskProvider>(context, listen: false);
                           await taskProvider.deleteTask(widget.task.id);
-                          if (mounted) {
+                          if (context.mounted) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(

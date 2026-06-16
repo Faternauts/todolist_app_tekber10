@@ -118,7 +118,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             profileProvider.loadProfile(),
           ]);
         } catch (e) {
-          print(' Warning: Could not load data: $e');
+          debugPrint(' Warning: Could not load data: $e');
         }
       }
 
@@ -381,7 +381,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(100),
                                 ),
-                                disabledBackgroundColor: const Color(0xFF9759C4).withOpacity(0.6),
+                                disabledBackgroundColor: const Color(0xFF9759C4).withValues(alpha: 0.6),
                               ),
                               child: _isLoading
                                   ? const SizedBox(

@@ -39,7 +39,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               Text(
                 'Theme Mode',
                 style: AppTextStyles.h4.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -87,7 +87,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               Text(
                 'Color Theme',
                 style: AppTextStyles.h4.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -189,7 +189,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               Text(
                 'Preview',
                 style: AppTextStyles.h4.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -268,7 +268,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               padding: const EdgeInsets.all(AppSpacing.sm),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
                     : (Theme.of(context).brightness == Brightness.dark
                         ? Colors.grey[800]
                         : const Color(0xFFF9FAFB)),
@@ -300,7 +300,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.6),
+                          .withValues(alpha: 0.6),
                     ),
                   ),
                 ],

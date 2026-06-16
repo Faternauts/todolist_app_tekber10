@@ -94,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final createdTask = await taskProvider.addTask(task);
 
       // Show success modal
+      if (!mounted) return;
       final shouldCheckTask = await SuccessModal.show(context);
 
       if (shouldCheckTask == true && mounted) {
@@ -112,7 +113,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final String today = DateFormat('EEEE, d MMMM yyyy').format(DateTime.now());
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -241,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
-                                      .withOpacity(0.5)),
+                                      .withValues(alpha: 0.5)),
                               prefixIcon: Padding(
                                 padding: const EdgeInsets.all(14.0),
                                 child: SvgPicture.asset('images/icons/lens.svg',
@@ -251,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Theme.of(context)
                                             .colorScheme
                                             .onSurface
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                         BlendMode.srcIn)),
                               ),
                               border: InputBorder.none,
@@ -277,13 +277,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     Theme.of(context)
                         .colorScheme
                         .primaryContainer
-                        .withOpacity(0.7)
+                        .withValues(alpha: 0.7)
                   ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(AppRadius.xxl + 10)),
                   ),
                   child: Column(
@@ -301,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: AppTextStyles.h3.copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onBackground)),
+                                        .onSurface)),
                           ],
                         ),
                       ),
@@ -347,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withOpacity(0.3),
+                                                .withValues(alpha: 0.3),
                                             BlendMode.srcIn)),
                                     const SizedBox(height: AppSpacing.md),
                                     Text('No tasks found',
@@ -355,14 +355,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withOpacity(0.7))),
+                                                .withValues(alpha: 0.7))),
                                     const SizedBox(height: AppSpacing.sm),
                                     Text('Tap the + button to add a new task',
                                         style: AppTextStyles.bodySmall.copyWith(
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
-                                                .withOpacity(0.5))),
+                                                .withValues(alpha: 0.5))),
                                   ],
                                 ),
                               );
@@ -415,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> {
               fontSize: 12,
               color: isSelected
                   ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               fontWeight: FontWeight.w500,
               fontFamily: 'SFProDisplay'),
         ),
@@ -434,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
           boxShadow: const [AppShadows.small],
         ),
         child: Row(
@@ -482,7 +482,7 @@ class _HomeScreenState extends State<HomeScreen> {
         boxShadow: isDark
             ? []
             : [
-                BoxShadow(
+                const BoxShadow(
                     color: AppColors.shadowColor,
                     blurRadius: 8,
                     offset: Offset(0, -2))
@@ -531,7 +531,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       : Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.4),
+                          .withValues(alpha: 0.4),
                   BlendMode.srcIn)),
           const SizedBox(height: 4),
           Text(
@@ -539,7 +539,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: AppTextStyles.caption.copyWith(
                 color: isActive
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                 fontWeight: isActive ? FontWeight.bold : FontWeight.w500),
           ),
         ],
@@ -556,7 +556,7 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
           shape: BoxShape.circle,
-          boxShadow: [AppShadows.medium],
+          boxShadow: const [AppShadows.medium],
         ),
         child: Icon(Icons.add,
             color: Theme.of(context).colorScheme.onPrimary, size: 32),

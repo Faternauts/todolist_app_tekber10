@@ -393,7 +393,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),
                               ),
-                              disabledBackgroundColor: const Color(0xFF9759C4).withOpacity(0.6),
+                              disabledBackgroundColor: const Color(0xFF9759C4).withValues(alpha: 0.6),
                             ),
                             child: _isLoading
                                 ? const SizedBox(

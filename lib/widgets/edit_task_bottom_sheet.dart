@@ -151,6 +151,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
       );
 
       // Update task in database
+      if (!mounted) return;
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
       await taskProvider.updateTask(widget.task.id, updatedTask);
 
@@ -183,7 +184,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius:
-              BorderRadius.vertical(top: Radius.circular(AppRadius.xxl)),
+              const BorderRadius.vertical(top: Radius.circular(AppRadius.xxl)),
         ),
         child: Column(
           children: [
@@ -207,14 +208,14 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                             color: Theme.of(context)
                                 .colorScheme
                                 .outline
-                                .withOpacity(0.2)),
+                                .withValues(alpha: 0.2)),
                       ),
                       child: Icon(Icons.close,
                           size: 18,
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.6)),
+                              .withValues(alpha: 0.6)),
                     ),
                   ),
                 ],
@@ -245,7 +246,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.4)),
+                                .withValues(alpha: 0.4)),
                         filled: true,
                         fillColor:
                             Theme.of(context).brightness == Brightness.dark
@@ -257,7 +258,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                               color: Theme.of(context)
                                   .colorScheme
                                   .outline
-                                  .withOpacity(0.2)),
+                                  .withValues(alpha: 0.2)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -265,7 +266,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                               color: Theme.of(context)
                                   .colorScheme
                                   .outline
-                                  .withOpacity(0.2)),
+                                  .withValues(alpha: 0.2)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -302,7 +303,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.4)),
+                                .withValues(alpha: 0.4)),
                         filled: true,
                         fillColor:
                             Theme.of(context).brightness == Brightness.dark
@@ -314,7 +315,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                               color: Theme.of(context)
                                   .colorScheme
                                   .outline
-                                  .withOpacity(0.2)),
+                                  .withValues(alpha: 0.2)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -322,7 +323,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                               color: Theme.of(context)
                                   .colorScheme
                                   .outline
-                                  .withOpacity(0.2)),
+                                  .withValues(alpha: 0.2)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -373,7 +374,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                         color: Theme.of(context)
                                             .colorScheme
                                             .outline
-                                            .withOpacity(0.2)),
+                                            .withValues(alpha: 0.2)),
                                   ),
                                   child: Row(
                                     children: [
@@ -396,7 +397,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                               Theme.of(context)
                                                   .colorScheme
                                                   .onSurface
-                                                  .withOpacity(0.4),
+                                                  .withValues(alpha: 0.4),
                                               BlendMode.srcIn)),
                                     ],
                                   ),
@@ -434,7 +435,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                         color: Theme.of(context)
                                             .colorScheme
                                             .outline
-                                            .withOpacity(0.2)),
+                                            .withValues(alpha: 0.2)),
                                   ),
                                   child: Row(
                                     children: [
@@ -457,7 +458,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                               Theme.of(context)
                                                   .colorScheme
                                                   .onSurface
-                                                  .withOpacity(0.4),
+                                                  .withValues(alpha: 0.4),
                                               BlendMode.srcIn)),
                                     ],
                                   ),
@@ -513,7 +514,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                           : Theme.of(context)
                                               .colorScheme
                                               .outline
-                                              .withOpacity(0.2),
+                                              .withValues(alpha: 0.2),
                                       width: isSelected ? 2 : 1),
                                 ),
                                 child: Text(
@@ -527,7 +528,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                                           : Theme.of(context)
                                               .colorScheme
                                               .onSurface
-                                              .withOpacity(0.6)),
+                                              .withValues(alpha: 0.6)),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -552,7 +553,7 @@ class _EditTaskBottomSheetState extends State<EditTaskBottomSheet>
                         color: Theme.of(context)
                             .colorScheme
                             .outline
-                            .withOpacity(0.2))),
+                            .withValues(alpha: 0.2))),
               ),
               child: SafeArea(
                 child: SizedBox(

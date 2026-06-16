@@ -108,7 +108,7 @@ class TaskProvider with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      print('Error adding task: $e');
+      debugPrint('Error adding task: $e');
       rethrow;
     }
   }
@@ -168,7 +168,7 @@ class TaskProvider with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      print('Error updating task: $e');
+      debugPrint('Error updating task: $e');
       rethrow;
     }
   }
@@ -187,7 +187,7 @@ class TaskProvider with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      print('Error deleting task: $e');
+      debugPrint('Error deleting task: $e');
       rethrow;
     }
   }
@@ -208,7 +208,7 @@ class TaskProvider with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      print('Error deleting tasks: $e');
+      debugPrint('Error deleting tasks: $e');
       rethrow;
     }
   }
@@ -235,7 +235,7 @@ class TaskProvider with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      print('Error marking task as completed: $e');
+      debugPrint('Error marking task as completed: $e');
       rethrow;
     }
   }
@@ -291,7 +291,7 @@ class TaskProvider with ChangeNotifier {
         if (json['due_date'] != null) {
           deadline = DateTime.parse(json['due_date']);
         } else {
-          deadline = DateTime.now().add(Duration(days: 1));
+          deadline = DateTime.now().add(const Duration(days: 1));
         }
 
         DateTime? startDate;
@@ -320,7 +320,7 @@ class TaskProvider with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      print('Error loading tasks: $e');
+      debugPrint('Error loading tasks: $e');
     }
   }
 
@@ -418,13 +418,13 @@ class TaskProvider with ChangeNotifier {
             return _parseSteps(decoded);
           }
         } catch (e) {
-          print('Could not parse steps string: $e');
+          debugPrint('Could not parse steps string: $e');
         }
       }
 
       return null;
     } catch (e) {
-      print('Error parsing steps: $e');
+      debugPrint('Error parsing steps: $e');
       return null;
     }
   }

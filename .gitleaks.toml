@@ -1,0 +1,17 @@
+# Gitleaks config — extends the default ruleset and allowlists known non-secrets.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Project-wide false positives"
+paths = [
+  # Template files contain placeholder values, not real secrets.
+  '''\.env\.example$''',
+]
+regexes = [
+  # Placeholder tokens used in docs/examples.
+  '''YOUR_OPEN_API_KEY''',
+  # Supabase ANON key — public client key (role: anon), protected by Row Level
+  # Security and shipped in the web bundle by design. Safe to commit.
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vZG5nY3ljdWRvc2hsZnZlcmps.*''',
+]

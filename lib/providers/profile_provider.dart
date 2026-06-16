@@ -50,7 +50,7 @@ class ProfileProvider with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
-      print('Error loading profile: $e');
+      debugPrint('Error loading profile: $e');
       // Tidak throw error supaya app tetap jalan
     }
   }
@@ -72,7 +72,7 @@ class ProfileProvider with ChangeNotifier {
 
       _profile = UserProfile(name: username);
     } catch (e) {
-      print('Error creating profile: $e');
+      debugPrint('Error creating profile: $e');
     }
   }
 
@@ -99,7 +99,7 @@ class ProfileProvider with ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      print('Error updating profile: $e');
+      debugPrint('Error updating profile: $e');
       rethrow;
     }
   }

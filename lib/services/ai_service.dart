@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -60,14 +61,14 @@ class AIService {
           }
         }
       } else {
-        print(
+        debugPrint(
             'Error: OpenAI API error: ${response.statusCode} - ${response.body}');
       }
 
       // Fallback if API fails
       return _simulateAIBreakdown(title);
     } catch (e) {
-      print('Error generating AI steps: $e');
+      debugPrint('Error generating AI steps: $e');
       // Fallback to simulation on error
       return _simulateAIBreakdown(title);
     }

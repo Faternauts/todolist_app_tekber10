@@ -9,7 +9,6 @@ import 'config/supabase_config.dart';
 import 'providers/task_provider.dart';
 import 'providers/profile_provider.dart';
 import 'providers/theme_provider.dart';
-import 'screens/sign_in_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
 
@@ -33,7 +32,7 @@ void main() async {
       try {
         await themeProvider.loadTheme();
       } catch (e) {
-        print('Warning: Could not load theme: $e');
+        debugPrint('Warning: Could not load theme: $e');
       }
 
       runApp(
@@ -49,7 +48,7 @@ void main() async {
 
     },
     (error, stack) {
-      print('Stack trace: $stack');
+      debugPrint('Stack trace: $stack');
     },
   );
 }
@@ -107,7 +106,7 @@ class _AuthCheckState extends State<AuthCheck> {
           profileProvider.loadProfile(),
         ]);
       } catch (e) {
-        print(' Warning: Could not load data: $e');
+        debugPrint(' Warning: Could not load data: $e');
       }
       
       // Navigate to home

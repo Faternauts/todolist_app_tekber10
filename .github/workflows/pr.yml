@@ -1,0 +1,132 @@
+name: PR Pipeline
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.38.3"
+
+jobs:
+  # 1. Security: secret scanning (Gitleaks) + dependency CVE scan (OSV)
+  security:
+    name: Security scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history for secret scan)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Gitleaks
+        run: |
+          GITLEAKS_VERSION=8.21.2
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /usr/local/bin gitleaks
+          gitleaks version
+
+      - name: Gitleaks secret scan
+        run: gitleaks dir . --redact --verbose --config .gitleaks.toml
+
+      # Dart has no native `pub audit`; OSV-Scanner understands pubspec.lock.
+      - name: Dependency CVE scan (OSV)
+        continue-on-error: true
+        uses: google/osv-scanner-action/osv-scanner-action@v1.9.2
+        with:
+          scan-args: |-
+            --lockfile=pubspec.lock
+
+  # 2. Quality: static analysis + tests + coverage upload to Codecov
+  quality:
+    name: Analyze & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # `.env` is gitignored but declared as a Flutter asset and loaded at
+      # runtime (lib/main.dart). Create a placeholder so the asset bundle
+      # resolves for test/build in CI.
+      - name: Create .env placeholder
+        run: cp .env.example .env
+
+      - name: Static analysis
+        run: flutter analyze
+
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      # Public repo → tokenless upload. Add CODECOV_TOKEN only if rate-limited.
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          fail_ci_if_error: false
+
+  # 3. Preview: build Flutter web → Cloudflare Pages → comment the URL on the PR
+  preview:
+    name: Preview deploy
+    runs-on: ubuntu-latest
+    needs: [security, quality]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # `.env` is a declared Flutter asset loaded at runtime; create a
+      # placeholder so the web build's asset bundle resolves in CI.
+      - name: Create .env placeholder
+        run: cp .env.example .env
+
+      # Each PR is served at its own subdomain root, so base href stays "/".
+      - name: Build Flutter web
+        run: flutter build web --release
+
+      # Deploy as branch "pr-<number>" so the alias maps to pr-<number>.<domain>.
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy build/web
+            --project-name=todolist-app-tekber
+            --branch=pr-${{ github.event.pull_request.number }}
+
+      - name: Comment preview URL on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: preview
+          message: |
+            ### 🚀 Preview deployment ready
+
+            | | |
+            |---|---|
+            | **Preview URL** | https://pr-${{ github.event.pull_request.number }}.todolist-app-tekber.pages.dev |
+            | **Cloudflare alias** | ${{ steps.deploy.outputs.deployment-url }} |
+            | **Commit** | ${{ github.event.pull_request.head.sha }} |

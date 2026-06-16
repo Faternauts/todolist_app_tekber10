@@ -210,7 +210,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 borderRadius: BorderRadius.circular(100),
                               ),
                               disabledBackgroundColor:
-                                  const Color(0xFF9759C4).withOpacity(0.6),
+                                  const Color(0xFF9759C4).withValues(alpha: 0.6),
                             ),
                             child: _isLoading
                                 ? const SizedBox(
@@ -324,7 +324,7 @@ class _SignInScreenState extends State<SignInScreen> {
           profileProvider.loadProfile(),
         ]);
       } catch (e) {
-        print('Error loading data after sign in: $e');
+        debugPrint('Error loading data after sign in: $e');
       }
 
       if (!mounted) return;

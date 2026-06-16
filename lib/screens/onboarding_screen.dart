@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'home_screen.dart';
 import 'sign_in_screen.dart';
 import 'signup_screen.dart';
 import '../constants/app_theme.dart';
@@ -87,11 +86,11 @@ class OnboardingScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Logo
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Placeholder for logo icon if needed, or just text
-                      const Text(
+                      Text(
                         'FocusBuddy',
                         style: TextStyle(
                           fontSize: 20,
@@ -199,7 +198,7 @@ class _BackgroundDecorationPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Circle 1: opacity="0.24" cx="84" cy="33" r="70" stroke="white" stroke-width="28"
     final paint1 = Paint()
-      ..color = Colors.white.withOpacity(0.24)
+      ..color = Colors.white.withValues(alpha: 0.24)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 28;
     
@@ -214,8 +213,8 @@ class _BackgroundDecorationPainter extends CustomPainter {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [
-        Colors.white.withOpacity(0.52),
-        Colors.white.withOpacity(0.2),
+        Colors.white.withValues(alpha: 0.52),
+        Colors.white.withValues(alpha: 0.2),
       ],
       stops: const [0.0, 1.0],
     );

@@ -52,6 +52,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
     );
 
     if (date != null) {
+      if (!mounted) return;
       final time = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.fromDateTime(_selectedDeadline),
